@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>PropEase — Leads</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-role="leads">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Leads</div>
+
+    <div class="top-actions">
+      <div class="muted">Signed in as <strong>Agent Demo</strong></div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="agent.html"><span class="icon"><img src="assets/icons/dashboard.png" alt=""></span>Overview</a>
+        <a href="clients.html"><span class="icon"><img src="assets/icons/clients.png" alt=""></span>Clients</a>
+        <a href="leads.html" class="active"><span class="icon"><img src="assets/icons/mail.png" alt=""></span>Leads</a>
+        <a href="properties.html"><span class="icon"><img src="assets/icons/properties.png" alt=""></span>Properties</a>
+        <a href="mail.html"><span class="icon"><img src="assets/icons/mail.png" alt=""></span>Mail</a>
+        <a href="notifications.html"><span class="icon"><img src="assets/icons/notifications.png" alt=""></span>Notifications</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="assets/icons/support.png" alt="support"></span>Help</div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Leads</h2>
+        <p class="muted">Manage incoming inquiries, progress lead stages, schedule viewings and contact prospects.</p>
+      </header>
+
+      <section class="panel" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="leadSearch" placeholder="Search leads or property" style="padding:10px;border-radius:8px;border:1px solid #eee;width:320px"/>
+            <select id="leadStatusFilter" style="padding:10px;border-radius:8px;border:1px solid #eee">
+              <option value="all">All statuses</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="toured">Toured</option>
+              <option value="offer">Offer</option>
+              <option value="closed">Closed</option>
+            </select>
+            <button id="btnFilterClear" class="btn">Clear</button>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button id="btnNewLead" class="btn">New Lead</button>
+            <button id="btnExportLeads" class="btn">Export</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px;overflow:auto">
+          <table class="table" style="width:100%;min-width:900px">
+            <thead>
+              <tr><th>Lead</th><th>Contact</th><th>Interested In</th><th>Source</th><th>Status</th><th>Next Step</th><th>Assigned</th><th>Action</th></tr>
+            </thead>
+            <tbody id="leadsTableBody">
+              <!-- populated by inline script -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="padding:12px">
+          <h4 style="margin:0 0 8px">Leads Summary</h4>
+          <div class="muted" id="leadsSummary">—</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    (function(){
+      // sample leads dataset (agent-specific)
+      const leads = [
+        { id:1, name:'Jamie Lee', contact:'(555) 321-987', email:'jamie@demo.com', property:'Riverside Tower', source:'Website', status:'contacted', next:'Schedule viewing', assigned:'Agent Demo', created:'2025-12-10' },
+        { id:2, name:'Sam K.', contact:'(555) 213-445', email:'samk@demo.com', property:'Midtown Residences', source:'Referral', status:'new', next:'Call', assigned:'Agent Demo', created:'2025-12-12' },
+        { id:3, name:'Rita Gomez', contact:'(555) 998-221', email:'rita@demo.com', property:'Oakwood Apartments', source:'Portal', status:'toured', next:'Follow up', assigned:'Agent Demo', created:'2025-12-08' },
+        { id:4, name:'New Prospect', contact:'(555) 101-202', email:'prospect@demo.com', property:'Garden Lofts', source:'Ad', status:'new', next:'Email', assigned:'Agent Demo', created:'2025-12-14' }
+      ];
+
+      const tbody = document.getElementById('leadsTableBody');
+      const summaryEl = document.getElementById('leadsSummary');
+      const searchInput = document.getElementById('leadSearch');
+      const statusFilter = document.getElementById('leadStatusFilter');
+
+      function renderRows(list){
+        tbody.innerHTML = list.map(l => `
+          <tr data-id="${l.id}">
+            <td><strong>${l.name}</strong><div class="muted" style="font-size:13px">${l.created}</div></td>
+            <td>${l.contact}<div class="muted" style="font-size:12px">${l.email}</div></td>
+            <td>${l.property}</td>
+            <td class="muted">${l.source}</td>
+            <td>${l.status.charAt(0).toUpperCase()+l.status.slice(1)}</td>
+            <td>${l.next}</td>
+            <td class="muted">${l.assigned}</td>
+            <td>
+              <button class="btn btn-contact">Contact</button>
+              <button class="btn btn-schedule">Schedule</button>
+              <button class="btn btn-view">View</button>
+            </td>
+          </tr>
+        `).join('');
+        attachRowActions();
+        renderSummary(list);
+      }
+
+      function renderSummary(list){
+        const byStatus = list.reduce((acc,l)=>{ acc[l.status] = (acc[l.status]||0)+1; return acc; },{});
+        const parts = Object.keys(byStatus).map(s=>`${s.charAt(0).toUpperCase()+s.slice(1)}: ${byStatus[s]}`);
+        summaryEl.textContent = parts.join(' • ') || 'No leads';
+      }
+
+      function attachRowActions(){
+        tbody.querySelectorAll('.btn-contact').forEach(b=>{
+          b.addEventListener('click', ev=>{
+            const row = ev.currentTarget.closest('tr');
+            const id = row && row.dataset && +row.dataset.id;
+            const lead = leads.find(x=>x.id===id);
+            const toast = document.createElement('div');
+            toast.textContent = 'Contacting ' + (lead?.name||'lead') + ' (demo)';
+            Object.assign(toast.style,{position:'fixed',right:'18px',bottom:'18px',background:'#111',color:'#fff',padding:'10px',borderRadius:'8px'});
+            document.body.appendChild(toast);
+            setTimeout(()=>toast.remove(),1600);
+          });
+        });
+        tbody.querySelectorAll('.btn-schedule').forEach(b=>{
+          b.addEventListener('click', ev=>{
+            const row = ev.currentTarget.closest('tr');
+            const id = row && row.dataset && +row.dataset.id;
+            const lead = leads.find(x=>x.id===id);
+            const when = prompt('Enter viewing datetime (demo):', '2025-12-18 10:00');
+            if (!when) return;
+            lead.next = 'Viewing: ' + when;
+            renderRows(filtered());
+          });
+        });
+        tbody.querySelectorAll('.btn-view').forEach(b=>{
+          b.addEventListener('click', ev=>{
+            const row = ev.currentTarget.closest('tr');
+            const id = row && row.dataset && +row.dataset.id;
+            const lead = leads.find(x=>x.id===id);
+            alert('Lead details (demo)\\n\\n' + JSON.stringify(lead, null, 2));
+          });
+        });
+      }
+
+      function filtered(){
+        const q = (searchInput.value||'').toLowerCase().trim();
+        const status = (statusFilter.value||'all').toLowerCase();
+        return leads.filter(l=>{
+          if (status !== 'all' && l.status !== status) return false;
+          if (!q) return true;
+          return (l.name + ' ' + l.property + ' ' + l.email + ' ' + l.contact).toLowerCase().includes(q);
+        });
+      }
+
+      // wire filter controls
+      searchInput.addEventListener('input', ()=> renderRows(filtered()));
+      statusFilter.addEventListener('change', ()=> renderRows(filtered()));
+      document.getElementById('btnFilterClear').addEventListener('click', ()=>{
+        searchInput.value = '';
+        statusFilter.value = 'all';
+        renderRows(filtered());
+      });
+
+      // New Lead / Export handlers (reuse agent demo handlers if present)
+      const newLeadBtn = document.getElementById('btnNewLead');
+      if (newLeadBtn) newLeadBtn.addEventListener('click', ()=>{
+        const name = prompt('Lead name (demo):');
+        if (!name) return;
+        const id = leads.length ? Math.max(...leads.map(l=>l.id))+1 : 1;
+        leads.unshift({ id, name, contact:'(555) 000-000', email:name.toLowerCase().replace(/\s+/g,'@demo.com'), property:'TBD', source:'Manual', status:'new', next:'Call', assigned:'Agent Demo', created: new Date().toISOString().slice(0,10) });
+        renderRows(filtered());
+      });
+
+      const exportBtn = document.getElementById('btnExportLeads');
+      if (exportBtn) exportBtn.addEventListener('click', ()=>{
+        const rows = filtered();
+        if (!rows.length) { alert('No leads to export'); return; }
+        const header = ['id','name','email','contact','property','source','status','next','assigned','created'];
+        const csv = [header.join(',')].concat(rows.map(r => [r.id, `"${r.name}"`, r.email, `"${r.contact}"`, `"${r.property}"`, r.source, r.status, `"${r.next}"`, `"${r.assigned}"`, r.created].join(','))).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'leads.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      // initial render
+      renderRows(leads);
+
+      // Basic client-side role enforcement: if script.js has applyAgentRestrictions it will also run
+      // expose leads for dev console
+      window.__demoLeads = leads;
+    })();
+  </script>
+</body>
+
+</html>

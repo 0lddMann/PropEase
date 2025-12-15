@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Charts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* small scoped tweaks so charts fit the layout and canvases don't overflow */
+    .charts-grid{ display:grid; grid-template-columns:1fr 420px; gap:16px; align-items:start; }
+    /* use fixed card height and let canvas fill it */
+    .chart-card{ padding:12px; height:320px; display:flex; flex-direction:column; gap:8px; }
+    .chart-card .card-title{ margin:0 0 8px; }
+    /* canvas fills the card height; Chart.js uses maintainAspectRatio:false so use 100% height */
+    .chart-canvas { width:100%; height:100%; display:block; }
+    @media (max-width:900px){
+      .charts-grid{ grid-template-columns:1fr; }
+      .chart-card{ height:260px; }
+      .chart-canvas{ height:100%; }
+    }
+  </style>
+</head>
+<body data-role="charts">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="assets/logo.jpg" class="site-logo--small" alt="logo">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Charts & Reports</div>
+
+    <div class="top-actions">
+      <div class="muted" id="signedInAs">Signed in</div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="assets/icons/dashboard.png" alt=""></span>Dashboard</a>
+        <a href="properties.html"><span class="icon"><img src="assets/icons/properties.png" alt=""></span>Properties</a>
+        <a href="leases.html"><span class="icon"><img src="assets/icons/leases.png" alt=""></span>Leases</a>
+        <a href="tenants.html"><span class="icon"><img src="assets/icons/clients.png" alt=""></span>Tenants</a>
+        <a href="sales.html"><span class="icon"><img src="assets/icons/sales.png" alt=""></span>Sales</a>
+        <a href="chart.html" class="active"><span class="icon"><img src="assets/icons/chart.png" alt=""></span>Charts</a>
+      </nav>
+
+      <div class="support">
+        <div class="icon"><img src="assets/icons/support.png" alt="support"></div>
+        <div class="support-label">Help</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Charts & Reports</h2>
+        <p class="muted">Visual summary of rents, payments and lease status for tenants.</p>
+      </header>
+
+      <section class="panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="chartFilter" placeholder="Filter by year (e.g. 2025)" style="padding:10px;border-radius:8px;border:1px solid #eee;width:220px"/>
+            <button id="btnRefreshCharts" class="btn">Refresh</button>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button id="btnExportCharts" class="btn">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="card chart-card">
+            <h4 style="margin:0 0 8px">Monthly Rent Collected</h4>
+            <canvas id="lineChart" class="chart-canvas" aria-label="Monthly rent collected" role="img"></canvas>
+          </div>
+
+          <aside>
+            <div class="card chart-card">
+              <h4 style="margin:0 0 8px">Lease Status Breakdown</h4>
+              <canvas id="pieChart" class="chart-canvas" aria-label="Lease status breakdown" role="img"></canvas>
+              <div id="chartLegend" class="muted small" style="margin-top:8px"></div>
+            </div>
+
+            <div class="card" style="padding:12px;margin-top:12px">
+              <h4 style="margin:0 0 8px">Quick insights</h4>
+              <div id="quickInsights" class="muted small">Loading…</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    (function(){
+      // load leases from storage or use demo set
+      const DEMO_LEASES = [
+        { id:'LS-2101', tenant:'Alex Porter', email:'alex@demo.com', property:'Midtown Residences', unit:'204', rent:1250, balance:0, status:'paid', paidAt:'2025-02-05' },
+        { id:'LS-2102', tenant:'Jamie Lee', email:'jamie@demo.com', property:'Riverside Tower', unit:'110', rent:1450, balance:290, status:'due', paidAt:null },
+        { id:'LS-2103', tenant:'Lina Tran', email:'lina@demo.com', property:'Garden Lofts', unit:'2A', rent:980, balance:0, status:'paid', paidAt:'2025-01-20' },
+        { id:'LS-2104', tenant:'Michael C.', email:'michael@demo.com', property:'Harbor View', unit:'302', rent:2200, balance:450, status:'due', paidAt:null }
+      ];
+      function loadLeases(){ try { return JSON.parse(localStorage.getItem('pe_leases')) || DEMO_LEASES; } catch(e){ return DEMO_LEASES; } }
+
+      // compute monthly sums for given year
+      function monthlyCollected(leases, year){
+        const months = Array.from({length:12}, ()=>0);
+        leases.forEach(l=>{
+          if(!l.paidAt) return;
+          const d = new Date(l.paidAt);
+          if(String(d.getFullYear()) !== String(year)) return;
+          months[d.getMonth()] += Number(l.rent) || 0;
+        });
+        return months;
+      }
+
+      function statusCounts(leases){
+        return leases.reduce((acc,l)=>{ acc[l.status] = (acc[l.status]||0)+1; return acc; }, {});
+      }
+
+      // build charts
+      let lineChart=null, pieChart=null;
+      function renderCharts(year){
+        const leases = loadLeases();
+        const months = monthlyCollected(leases, year);
+        const status = statusCounts(leases);
+
+        const ctxLine = document.getElementById('lineChart').getContext('2d');
+        if(lineChart) lineChart.destroy();
+        lineChart = new Chart(ctxLine, {
+          type: 'line',
+          data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            datasets: [{ label: 'Rent collected', data: months, borderColor: '#e11d2d', backgroundColor: 'rgba(225,29,45,0.08)', tension:0.25, fill:true }]
+          },
+          options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} , scales:{y:{beginAtZero:true}} }
+        });
+
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        if(pieChart) pieChart.destroy();
+        const labels = Object.keys(status);
+        const values = labels.map(k=>status[k]);
+        const colors = labels.map(k=> k==='paid' ? '#10b981' : k==='due' ? '#f59e0b' : '#6b7280');
+        pieChart = new Chart(ctxPie, {
+          type: 'doughnut',
+          data: { labels, datasets:[{ data: values, backgroundColor: colors, hoverOffset:6 }] },
+          options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} }
+        });
+
+        // legend text and insights
+        document.getElementById('chartLegend').textContent = labels.map((l,i)=> `${l}: ${values[i] || 0}`).join(' • ');
+        const totalCollected = months.reduce((a,b)=>a+b,0);
+        const dueCount = status.due || 0;
+        document.getElementById('quickInsights').innerHTML = `
+          <div>Total rent collected in ${year}: <strong>$${Number(totalCollected).toLocaleString()}</strong></div>
+          <div>Leases due: <strong>${dueCount}</strong></div>
+        `;
+      }
+
+      // CSV export: flattened leases
+      document.getElementById('btnExportCharts').addEventListener('click', ()=>{
+        const leases = loadLeases();
+        const csv = leases.map(l => [l.id,l.tenant,l.email,l.property,l.unit,l.rent,l.balance,l.status,l.paidAt||''].join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'leases_report.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('btnRefreshCharts').addEventListener('click', ()=> {
+        const year = document.getElementById('chartFilter').value || new Date().getFullYear();
+        renderCharts(year);
+      });
+
+      // initial
+      try { const s = sessionStorage.getItem('pe_session'); if(s) document.getElementById('signedInAs').textContent = 'Signed in as ' + JSON.parse(s).name; } catch(e){}
+      document.getElementById('chartFilter').value = new Date().getFullYear();
+      renderCharts(document.getElementById('chartFilter').value);
+
+      // expose for debug
+      window.__chartsDemo = { renderCharts, loadLeases };
+    })();
+  </script>
+</body>
+</html>

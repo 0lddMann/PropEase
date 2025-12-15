@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Client</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Scoped styles for the enhanced client search — lives only in this file */
+    .client-hero {
+      position:relative;
+      border-radius:12px;
+      overflow:hidden;
+      background-size:cover;
+      background-position:center;
+      color:#fff;
+      padding:28px 20px; /* slimmer hero */
+      margin-bottom:18px;
+    }
+    .client-hero::after{
+      content:'';
+      position:absolute;
+      inset:0;
+      /* stronger dark overlay to make white text pop against your image */
+      background:linear-gradient(180deg, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.60) 100%);
+      pointer-events:none;
+    }
+    .client-hero .hero-inner{ position:relative; z-index:2; max-width:980px; width:100%; }
+
+    /* compact, dark translucent search panel */
+    .search-hero.enhanced{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      background: rgba(0,0,0,0.36); /* dark translucent so text contrasts with image */
+      padding:8px 10px; /* slimmer */
+      border-radius:12px;
+      box-shadow: 0 8px 26px rgba(2,6,23,0.16);
+      position:relative;
+      min-height:52px;
+    }
+
+    .search-hero.enhanced .search-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:1;
+      min-width:0;
+    }
+
+    .search-hero.enhanced .search-icon{
+      flex:0 0 44px;
+      height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:10px;
+      background: rgba(255,255,255,0.06);
+      color:#fff;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+    }
+
+    /* input — keep text clear and not oversized */
+    .search-hero.enhanced input[type="search"]{
+      flex:1;
+      background:transparent;
+      border:0;
+      outline:none;
+      color:#fff;
+      font-size:15px;
+      padding:8px 6px;
+      font-weight:500;
+    }
+    .search-hero.enhanced input[type="search"]::placeholder{
+      color: rgba(255,255,255,0.75);
+      font-weight:500;
+    }
+
+    /* recent chips - subtle and compact */
+    .search-hero.enhanced .chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-right:6px;
+      max-width:260px;
+    }
+    .search-hero.enhanced .chip{
+      background:rgba(255,255,255,0.06);
+      color:rgba(255,255,255,0.95);
+      padding:5px 9px;
+      border-radius:999px;
+      font-size:13px;
+      cursor:pointer;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    /* submit button (scoped) */
+    .search-hero.enhanced > .search-actions { flex:0 0 auto; }
+    .search-hero.enhanced > .search-actions .search-submit{
+      padding:9px 14px;
+      border-radius:8px;
+      border:0;
+      background:#ffffff;
+      color:var(--text);
+      font-weight:700;
+      box-shadow:0 8px 20px rgba(2,6,23,0.08);
+      cursor:pointer;
+    }
+
+    /* results dropdown — compact thumbnails */
+    .search-hero.enhanced .search-results{
+      position:absolute;
+      left:12px;
+      right:12px;
+      top:calc(100% + 8px);
+      background:#fff;
+      color:var(--text);
+      border-radius:10px;
+      padding:8px;
+      box-shadow:0 18px 40px rgba(2,6,23,0.12);
+      max-height:300px;
+      overflow:auto;
+      display:none;
+      z-index:160;
+    }
+    .search-hero.enhanced .result{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:8px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .search-hero.enhanced .result:hover, .search-hero.enhanced .result:focus{ background:#f5f7fb; outline:none; }
+    .search-hero.enhanced .result-thumb{ width:56px; height:42px; object-fit:cover; border-radius:6px; flex:0 0 56px; }
+    .search-hero.enhanced .result-body{ flex:1; min-width:0; }
+    .search-hero.enhanced .result-action .btn.small{ padding:6px 8px; font-size:13px; border-radius:8px; }
+
+    .search-hero.enhanced .result:focus{ box-shadow:0 0 0 3px rgba(224,34,40,0.10); }
+
+    /* removal of aggressive resets — use targeted styling so global .btn stays intact */
+    /* (no all:unset here) */
+
+    @media(max-width:900px){
+      .client-hero{ padding:20px 12px; }
+      .search-hero.enhanced .search-left{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .search-hero.enhanced .chips{ max-width:100%; }
+      .search-hero.enhanced .search-results{ left:8px; right:8px; top:calc(100% + 8px); }
+    }
+  </style>
+</head>
+<body data-role="client">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Client Home</div>
+
+    <div class="top-actions">
+      <div class="muted">Signed in as <strong>Client Demo</strong></div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="client.html" class="active"><span class="icon"><img src="assets/icons/dashboard.png" alt=""></span>Home</a>
+        <a href="properties.html"><span class="icon"><img src="assets/icons/properties.png" alt=""></span>Properties</a>
+        <a href="mail.html"><span class="icon"><img src="assets/icons/mail.png" alt=""></span>Messages</a>
+        <a href="notifications.html"><span class="icon"><img src="assets/icons/notifications.png" alt=""></span>Notifications</a>
+        <a href="leases.html"><span class="icon"><img src="assets/icons/leases.png" alt=""></span>Leases</a>
+      </nav>
+
+      <div class="support">
+        <div class="icon"><img src="assets/icons/support.png" alt="support"></div>
+        <div class="support-label">Help</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Find your perfect place</h2>
+        <p class="muted">Search listings, submit inquiries and see viewings scheduled by your agent.</p>
+      </header>
+
+      <section class="panel">
+        <div class="client-hero" style="background-image:url('assets/searchbackground.png')">
+          <div class="hero-inner">
+            <h3 style="margin:0 0 8px">Search properties</h3>
+            <p class="muted" style="margin:0 0 12px">Search by city, neighbourhood or property name. Your agent will contact you for scheduled viewings.</p>
+
+            <!-- enhanced search (styles and JS are inline and scoped to this page) -->
+            <form id="propertySearchForm" class="search-hero enhanced" onsubmit="return false;" autocomplete="off">
+              <div class="search-left">
+                <div class="search-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="chips" id="recentChips" aria-hidden="true"></div>
+                <input id="propertySearchInput" type="search" placeholder="Try: 'Riverside', '2 bedroom', 'Chicago'">
+              </div>
+
+              <div class="search-actions">
+                <button id="propertySearchBtn" class="search-submit" type="submit">Search</button>
+              </div>
+
+              <div class="search-results" id="propertySearchResults" aria-hidden="true" role="listbox"></div>
+            </form>
+
+            <script>
+              (function(){
+                const input = document.getElementById('propertySearchInput');
+                const resultsEl = document.getElementById('propertySearchResults');
+                const chipsEl = document.getElementById('recentChips');
+                const form = document.getElementById('propertySearchForm');
+
+                const props = [
+                  { id:'p1', name:'Midtown Residences', city:'New York', thumb:'../assets/prop1.jpg', tag:'2 bed' },
+                  { id:'p2', name:'Riverside Tower', city:'Chicago', thumb:'../assets/prop2.jpg', tag:'studio' },
+                  { id:'p3', name:'Oakwood Apartments', city:'Boston', thumb:'../assets/prop3.jpg', tag:'1 bed' },
+                  { id:'p4', name:'Harbor View', city:'San Diego', thumb:'../assets/prop4.jpg', tag:'3 bed' },
+                  { id:'p5', name:'Garden Lofts', city:'Seattle', thumb:'../assets/prop5.jpg', tag:'loft' }
+                ];
+
+                let recent = JSON.parse(sessionStorage.getItem('pe_recent_searches') || '[]');
+                function renderChips(){
+                  chipsEl.innerHTML = recent.slice(0,6).map(s => `<button type="button" class="chip">${s}</button>`).join('');
+                  chipsEl.style.display = recent.length ? 'flex' : 'none';
+                  chipsEl.querySelectorAll('.chip').forEach(b => b.addEventListener('click', ()=> { input.value = b.textContent; runQuery(); }));
+                }
+                renderChips();
+
+                function query(q){
+                  const t = q.trim().toLowerCase();
+                  if(!t) return [];
+                  return props.filter(p => (p.name + ' ' + p.city + ' ' + p.tag).toLowerCase().includes(t)).slice(0,8);
+                }
+
+                let idx = -1;
+                function renderResults(list){
+                  if(!list.length){ resultsEl.style.display='none'; resultsEl.setAttribute('aria-hidden','true'); return; }
+                  resultsEl.innerHTML = list.map((p,i) => `
+                    <div class="result" role="option" data-id="${p.id}" data-idx="${i}" tabindex="-1">
+                      <img src="${p.thumb}" alt="" class="result-thumb">
+                      <div class="result-body">
+                        <strong>${p.name}</strong>
+                        <small class="muted">${p.city} • ${p.tag}</small>
+                      </div>
+                      <div class="result-action"><button class="btn small">View</button></div>
+                    </div>
+                  `).join('');
+                  resultsEl.style.display='block';
+                  resultsEl.setAttribute('aria-hidden','false');
+                  idx = -1;
+                  resultsEl.querySelectorAll('.result').forEach(el => {
+                    el.addEventListener('click', ()=>{
+                      const id = el.dataset.id; const p = props.find(x=>x.id===id);
+                      if(p) { alert('Property (demo):\\n' + p.name + ' — ' + p.city); hideResults(); }
+                    });
+                  });
+                }
+
+                function hideResults(){ resultsEl.style.display='none'; resultsEl.setAttribute('aria-hidden','true'); idx = -1; }
+
+                function runQuery(){
+                  const list = query(input.value);
+                  renderResults(list);
+                  if(input.value.trim()){
+                    recent = [input.value.trim()].concat(recent.filter(r=>r!==input.value.trim())).slice(0,8);
+                    sessionStorage.setItem('pe_recent_searches', JSON.stringify(recent));
+                    renderChips();
+                  }
+                }
+
+                let timer=null;
+                input.addEventListener('input', ()=>{ clearTimeout(timer); timer=setTimeout(runQuery, 160); });
+
+                input.addEventListener('keydown', function(e){
+                  const items = resultsEl.querySelectorAll('.result');
+                  if(!items.length) return;
+                  if(e.key === 'ArrowDown'){ e.preventDefault(); idx = Math.min(idx+1, items.length-1); items[idx].focus(); items[idx].classList.add('focus'); }
+                  if(e.key === 'ArrowUp'){ e.preventDefault(); idx = Math.max(idx-1, 0); items[idx].focus(); items[idx].classList.add('focus'); }
+                  if(e.key === 'Enter'){ e.preventDefault(); if(idx>=0 && items[idx]) items[idx].click(); else runQuery(); }
+                  if(e.key === 'Escape'){ hideResults(); }
+                });
+
+                document.addEventListener('click', function(ev){
+                  if(!form.contains(ev.target)) hideResults();
+                });
+
+                form.addEventListener('submit', function(e){
+                  e.preventDefault();
+                  runQuery();
+                });
+              })();
+            </script>
+
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start;margin-top:16px">
+          <div>
+            <div class="card" style="margin-bottom:12px">
+              <h4 style="margin:0 0 8px">Properties scheduled for you</h4>
+              <div id="scheduledPropertiesList" class="muted">Loading…</div>
+            </div>
+
+            <div class="card" style="margin-bottom:12px">
+              <h4 style="margin:0 0 8px">Submit an inquiry</h4>
+              <form id="inquiryForm" style="display:flex;flex-direction:column;gap:8px">
+                <label class="muted">Property</label>
+                <select id="inquiryProperty" required class="form-select"></select>
+
+                <label class="muted">Message</label>
+                <textarea id="inquiryMessage" rows="4" placeholder="Ask about availability, schedule or details" required style="padding:10px;border-radius:8px;border:1px solid #eee"></textarea>
+
+                <div style="display:flex;gap:8px">
+                  <button id="submitInquiryBtn" class="btn primary" type="button">Send Inquiry</button>
+                  <button id="clearInquiryBtn" class="btn" type="button">Clear</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <h4 style="margin:0 0 8px">My Inquiries & Responses</h4>
+              <div id="inquiriesList" class="muted">No inquiries yet.</div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="card" style="padding:12px;margin-bottom:12px">
+              <h4 style="margin:0 0 8px">Quick tips</h4>
+              <ul class="muted" style="margin:0;padding-left:16px">
+                <li>Use the search to find properties your agent has suggested.</li>
+                <li>Submit inquiries — your agent will receive and schedule viewings.</li>
+                <li>Check scheduled viewings and messages here.</li>
+              </ul>
+            </div>
+
+            <div class="card" style="padding:12px">
+              <h4 style="margin:0 0 8px">Contact support</h4>
+              <div class="muted">If you need help, reach out to support@racersrealestate.co</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    (function(){
+      const allProperties = [
+        { id: 'p1', name:'Midtown Residences', city:'New York', scheduledForClient: ['client@demo.com']},
+        { id: 'p2', name:'Riverside Tower', city:'Chicago', scheduledForClient: ['client@demo.com']},
+        { id: 'p3', name:'Oakwood Apartments', city:'Boston', scheduledForClient: []},
+        { id: 'p4', name:'Harbor View', city:'San Diego', scheduledForClient: []},
+      ];
+
+      const email = (function(){ try { const s = sessionStorage.getItem('pe_session'); return s ? JSON.parse(s).email : 'client@demo.com'; } catch(e){ return 'client@demo.com'; } })();
+
+      function getScheduledForClient(){ return allProperties.filter(p => (p.scheduledForClient || []).includes(email)); }
+
+      function renderScheduled(){
+        const list = getScheduledForClient();
+        const el = document.getElementById('scheduledPropertiesList');
+        if (!list.length) { el.innerHTML = '<div class="muted">No scheduled viewings yet. Your agent will add viewings here.</div>'; return; }
+        el.innerHTML = list.map(p => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f2f2f2">
+            <div><strong>${p.name}</strong><div class="muted" style="font-size:13px">${p.city}</div></div>
+            <div><button class="btn" data-id="${p.id}">View details</button></div>
+          </div>
+        `).join('');
+        el.querySelectorAll('button').forEach(b => b.addEventListener('click', ev => {
+          const id = b.dataset.id;
+          const prop = allProperties.find(x=>x.id===id);
+          if(prop) alert('Property details (demo)\\n\\n' + prop.name + ' — ' + prop.city);
+        }));
+      }
+
+      function populateInquirySelect(){
+        const sel = document.getElementById('inquiryProperty');
+        const scheduled = getScheduledForClient();
+        const list = scheduled.length ? scheduled : allProperties;
+        sel.innerHTML = list.map(p => `<option value="${p.id}">${p.name} — ${p.city}</option>`).join('');
+      }
+
+      const STORAGE_KEY = 'pe_inquiries';
+      function loadInquiries(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e){ return []; } }
+      function saveInquiry(obj){ const arr = loadInquiries(); arr.unshift(obj); localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+
+      function renderInquiries(){
+        const list = loadInquiries().filter(i => i.email === email);
+        const el = document.getElementById('inquiriesList');
+        if (!list.length) { el.innerHTML = '<div class="muted">No inquiries yet.</div>'; return; }
+        el.innerHTML = list.map(i => `
+          <div style="padding:8px 0;border-bottom:1px solid #f2f2f2">
+            <strong>${i.propertyName}</strong>
+            <div class="muted" style="font-size:13px">${i.message}</div>
+            <div class="muted" style="font-size:12px">Submitted: ${i.created}</div>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('submitInquiryBtn').addEventListener('click', function(){
+        const propId = document.getElementById('inquiryProperty').value;
+        const msg = document.getElementById('inquiryMessage').value.trim();
+        if (!propId || !msg) {
+          const t = document.createElement('div'); t.textContent = 'Please select a property and enter a message.'; Object.assign(t.style,{position:'fixed',right:'18px',bottom:'18px',background:'#b91c1c',color:'#fff',padding:'10px',borderRadius:'8px'}); document.body.appendChild(t); setTimeout(()=>t.remove(),2000); return;
+        }
+        const prop = allProperties.find(p=>p.id===propId) || { name: 'Unknown' };
+        const obj = { id: Date.now(), email, propertyId: propId, propertyName: prop.name, message: msg, created: new Date().toISOString().slice(0,10), status:'sent' };
+        saveInquiry(obj);
+        renderInquiries();
+        document.getElementById('inquiryMessage').value = '';
+        const t = document.createElement('div'); t.textContent = 'Inquiry sent — your agent will contact you.'; Object.assign(t.style,{position:'fixed',right:'18px',bottom:'18px',background:'#111',color:'#fff',padding:'10px',borderRadius:'8px'}); document.body.appendChild(t); setTimeout(()=>t.remove(),1700);
+      });
+
+      document.getElementById('clearInquiryBtn').addEventListener('click', function(){ document.getElementById('inquiryMessage').value=''; });
+
+      // initial render
+      populateInquirySelect();
+      renderScheduled();
+      renderInquiries();
+      window.refreshClient = function(){ populateInquirySelect(); renderScheduled(); renderInquiries(); };
+    })();
+  </script>
+</body>
+</html>

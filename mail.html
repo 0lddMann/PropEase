@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropEase — Mail</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-role="mail">
+  <div class="topbar">
+  <button class="hamburger" aria-label="menu">☰</button>
+
+  <div class="brand-header">
+    <img src="assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+    <div class="brand-text">RACERSREALESTATE.CO</div>
+  </div>
+
+  <div class="top-title">Mail</div>
+
+  <div class="top-actions">
+    <div class="muted">Signed in</div>
+  </div>
+</div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="assets/icons/dashboard.png" alt="dashboard"></span>Dashboard</a>
+        <a href="mail.html" class="active"><span class="icon"><img src="assets/icons/mail.png" alt="mail"></span>Mail</a>
+        <a href="notifications.html"><span class="icon"><img src="assets/icons/notifications.png" alt="notifications"></span>Notifications</a>
+        <a href="settings.html"><span class="icon"><img src="assets/icons/settings.png" alt="settings"></span>Settings</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="assets/icons/support.png" alt="support"></span>Support</div>
+    </aside>
+
+    <main class="main">
+      <header><h2>Inbox</h2></header>
+
+      <section class="panel">
+        <div style="display:flex;gap:18px;">
+          <div style="width:300px;">
+            <div class="card" style="padding:12px">
+              <strong>Folders</strong>
+              <ul style="margin:8px 0 0;padding-left:18px">
+                <li>Inbox</li><li>Sent</li><li>Drafts</li><li>Archive</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="flex:1;">
+            <div class="card" style="padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <input placeholder="Search mail..." style="width:72%;padding:10px;border-radius:8px;border:1px solid #eee"/>
+                <button class="btn">Compose</button>
+              </div>
+
+              <div style="margin-top:12px">
+                <!-- static demo list -->
+                <div style="padding:10px 8px;border-bottom:1px solid #f1f1f1;display:flex;gap:12px;align-items:flex-start">
+                  <div style="width:40px;height:40px;border-radius:8px;background:#f7f7f7"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;justify-content:space-between"><strong>Jackson G.</strong><span style="color:var(--muted);font-size:13px">06:41 pm</span></div>
+                    <div style="color:var(--muted);font-size:14px">Quick feedback needed on latest prototype — short preview text...</div>
+                  </div>
+                </div>
+
+                <div style="padding:10px 8px;border-bottom:1px solid #f1f1f1;display:flex;gap:12px;align-items:flex-start">
+                  <div style="width:40px;height:40px;border-radius:8px;background:#fff0f0"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;justify-content:space-between"><strong>Willis L.</strong><span style="color:var(--muted);font-size:13px">01:55 pm</span></div>
+                    <div style="color:var(--muted);font-size:14px">Exciting news: new user testing opportunity — preview...</div>
+                  </div>
+                </div>
+
+                <div style="padding:10px 8px;border-bottom:1px solid #f1f1f1;display:flex;gap:12px;align-items:flex-start">
+                  <div style="width:40px;height:40px;border-radius:8px;background:#f7f7f7"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;justify-content:space-between"><strong>Bill S.</strong><span style="color:var(--muted);font-size:13px">Yesterday</span></div>
+                    <div style="color:var(--muted);font-size:14px">Request for collaboration: design sprint next week...</div>
+                  </div>
+                </div>
+
+                <!-- more static items for demo -->
+                <div style="padding:10px 8px;border-bottom:1px solid #f1f1f1;display:flex;gap:12px;align-items:flex-start">
+                  <div style="width:40px;height:40px;border-radius:8px;background:#eef7ff"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;justify-content:space-between"><strong>Julie E.</strong><span style="color:var(--muted);font-size:13px">2 days ago</span></div>
+                    <div style="color:var(--muted);font-size:14px">Your input needed: redesigning user onboarding...</div>
+                  </div>
+                </div>
+
+                <div style="padding:10px 8px;border-bottom:1px solid #f1f1f1;display:flex;gap:12px;align-items:flex-start">
+                  <div style="width:40px;height:40px;border-radius:8px;background:#fff"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;justify-content:space-between"><strong>Michelle R.</strong><span style="color:var(--muted);font-size:13px">Dec 2</span></div>
+                    <div style="color:var(--muted);font-size:14px">Limited time offer: AP process — preview text...</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script src="js/script.js"></script>
+</body>
+
+</html>

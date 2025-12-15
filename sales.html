@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Sales</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-role="sales">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Sales</div>
+
+    <div class="top-actions">
+      <div class="muted" id="signedInAs">Signed in</div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="assets/icons/dashboard.png" alt=""></span>Dashboard</a>
+        <a href="properties.html"><span class="icon"><img src="assets/icons/properties.png" alt=""></span>Properties</a>
+        <a href="leases.html"><span class="icon"><img src="assets/icons/leases.png" alt=""></span>Leases</a>
+        <a href="tenants.html"><span class="icon"><img src="assets/icons/clients.png" alt=""></span>Tenants</a>
+        <a href="sales.html" class="active"><span class="icon"><img src="assets/icons/sales.png" alt=""></span>Sales</a>
+      </nav>
+
+      <div class="support">
+        <div class="icon"><img src="../assets/icons/support.png" alt="support"></div>
+        <div class="support-label">Help</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Sales Dashboard</h2>
+        <p class="muted">Manage leads, convert deals and track revenue focused on tenants and leases.</p>
+      </header>
+
+      <section class="panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="leadSearch" placeholder="Search lead, email or property" style="padding:10px;border-radius:8px;border:1px solid #eee;width:380px"/>
+            <select id="leadStageFilter" style="padding:10px;border-radius:8px;border:1px solid #eee">
+              <option value="all">All stages</option>
+              <option value="new">New</option>
+              <option value="qualified">Qualified</option>
+              <option value="contacted">Contacted</option>
+              <option value="demo">Demo</option>
+              <option value="proposal">Proposal</option>
+              <option value="negotiation">Negotiation</option>
+              <option value="offer">Offer</option>
+              <option value="follow-up">Follow-up</option>
+              <option value="won">Won</option>
+              <option value="lost">Lost</option>
+            </select>
+            <button id="btnClear" class="btn">Clear</button>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button id="btnExportLeads" class="btn">Export</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start">
+          <div class="card" style="padding:8px;overflow:auto">
+            <table class="table" style="width:100%;min-width:920px">
+              <thead>
+                <tr>
+                  <th>Lead</th>
+                  <th>Contact</th>
+                  <th>Property</th>
+                  <th>Stage</th>
+                  <th>Assigned</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTable"></tbody>
+            </table>
+          </div>
+
+          <aside>
+            <div class="card" style="padding:12px;margin-bottom:12px">
+              <h4 style="margin:0 0 8px">Pipeline Summary</h4>
+              <div id="pipelineSummary" class="muted">—</div>
+            </div>
+
+            <div class="card" style="padding:12px">
+              <h4 style="margin:0 0 8px">Quick actions</h4>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button id="btnBulkContact" class="btn">Contact Selected</button>
+                <button id="btnBulkWon" class="btn primary">Mark Selected Won</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    (function(){
+      // demo leads (expanded list)
+      const DEMO_LEADS = [
+        { id:'LD-1001', name:'Alex Porter',   email:'alex@demo.com',    phone:'(555) 111-2222', property:'Midtown Residences', stage:'contacted',   assigned:'Jamie' },
+        { id:'LD-1002', name:'Rita Gomez',    email:'rita@demo.com',    phone:'(555) 333-4444', property:'Oakwood Apartments', stage:'proposal',    assigned:'Sam' },
+        { id:'LD-1003', name:'Jamie Lee',     email:'jamie@demo.com',   phone:'(555) 555-6666', property:'Riverside Tower',    stage:'new',         assigned:'' },
+        { id:'LD-1004', name:'Samir Khan',    email:'samir@demo.com',   phone:'(555) 777-8888', property:'Harbor View',        stage:'qualified',   assigned:'Maya' },
+        { id:'LD-1005', name:'Lina Tran',     email:'lina@demo.com',    phone:'(555) 999-0000', property:'Garden Lofts',       stage:'demo',        assigned:'Sam' },
+        { id:'LD-1006', name:'Chris P.',      email:'chris@demo.com',   phone:'(555) 222-3333', property:'Riverside Tower',    stage:'negotiation', assigned:'Jamie' },
+        { id:'LD-1007', name:'Olivia R.',     email:'olivia@demo.com',  phone:'(555) 444-5555', property:'Midtown Residences', stage:'offer',       assigned:'Maya' },
+        { id:'LD-1008', name:'Daniel Wu',     email:'daniel@demo.com',  phone:'(555) 888-1212', property:'Harbor View',        stage:'contacted',   assigned:'Sam' },
+        { id:'LD-1009', name:'Priya Nair',    email:'priya@demo.com',   phone:'(555) 212-3434', property:'Garden Lofts',       stage:'follow-up',   assigned:'Alex' },
+        { id:'LD-1010', name:'Marcus Li',     email:'marcus@demo.com',  phone:'(555) 454-5656', property:'Oakwood Apartments', stage:'proposal',    assigned:'Sam' },
+        { id:'LD-1011', name:'Sara O.',       email:'sara@demo.com',    phone:'(555) 676-7878', property:'Riverside Tower',    stage:'new',         assigned:'' },
+        { id:'LD-1012', name:'Victor H.',     email:'victor@demo.com',  phone:'(555) 898-9090', property:'Midtown Residences', stage:'qualified',   assigned:'Jamie' },
+        { id:'LD-1013', name:'Elena G.',      email:'elena@demo.com',   phone:'(555) 101-1212', property:'Garden Lofts',       stage:'demo',        assigned:'Maya' },
+        { id:'LD-1014', name:'Tom Sanders',   email:'tom@demo.com',     phone:'(555) 131-4151', property:'Harbor View',        stage:'negotiation', assigned:'Alex' },
+        { id:'LD-1015', name:'Aisha B.',      email:'aisha@demo.com',   phone:'(555) 161-7181', property:'Oakwood Apartments', stage:'offer',       assigned:'Sam' },
+        { id:'LD-1016', name:'Nate Rowe',     email:'nate@demo.com',    phone:'(555) 192-0212', property:'Midtown Residences', stage:'contacted',   assigned:'Jamie' }
+      ];
+
+      const STORAGE = 'pe_leads';
+
+      function loadLeads(){ try { return JSON.parse(localStorage.getItem(STORAGE)) || DEMO_LEADS; } catch(e){ return DEMO_LEADS; } }
+      function saveLeads(l){ localStorage.setItem(STORAGE, JSON.stringify(l)); }
+
+      function formatContact(l){ return `<div><strong>${l.name}</strong><div class="muted" style="font-size:13px">${l.email} • ${l.phone}</div></div>`; }
+
+      function renderLeads(list){
+        const tbody = document.getElementById('leadsTable');
+        if(!list.length){ tbody.innerHTML = '<tr><td colspan="6" class="muted">No leads found.</td></tr>'; return; }
+        tbody.innerHTML = list.map(l => `
+          <tr data-id="${l.id}">
+            <td><strong>${l.id}</strong></td>
+            <td>${formatContact(l)}</td>
+            <td>${l.property}</td>
+            <td class="muted">${l.stage.charAt(0).toUpperCase() + l.stage.slice(1)}</td>
+            <td>${l.assigned || '<span class="muted">Unassigned</span>'}</td>
+            <td>
+              <button class="btn btn-assign" data-id="${l.id}">Assign</button>
+              <button class="btn btn-won" data-id="${l.id}">Won</button>
+              <button class="btn btn-lost" data-id="${l.id}">Lost</button>
+            </td>
+          </tr>
+        `).join('');
+        attachRowActions();
+        renderSummary(list);
+      }
+
+      function renderSummary(list){
+        const total = list.length;
+        const byStage = list.reduce((acc,l)=>{
+          acc[l.stage] = (acc[l.stage]||0) + 1; return acc;
+        }, {});
+        const stagesOrder = ['new','qualified','contacted','demo','proposal','negotiation','offer','follow-up','won','lost'];
+        function displayName(s){ return s.split('-').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' '); }
+        const parts = stagesOrder.map(s => `${displayName(s)}: ${byStage[s] || 0}`);
+        const summary = `Total: ${total} • ${parts.join(' • ')}`;
+        document.getElementById('pipelineSummary').textContent = summary;
+      }
+
+      function attachRowActions(){
+        document.querySelectorAll('.btn-assign').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const id = btn.dataset.id;
+            const name = prompt('Assign to (agent name):','');
+            if(name === null) return;
+            const leads = loadLeads();
+            const l = leads.find(x=>x.id===id); if(!l) return;
+            l.assigned = name.trim();
+            saveLeads(leads); renderLeads(filtered());
+          });
+        });
+        document.querySelectorAll('.btn-won').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const id = btn.dataset.id;
+            const leads = loadLeads();
+            const l = leads.find(x=>x.id===id); if(!l) return;
+            l.stage = 'won';
+            saveLeads(leads); renderLeads(filtered());
+            alert('Marked won (demo).');
+          });
+        });
+        document.querySelectorAll('.btn-lost').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const id = btn.dataset.id;
+            const leads = loadLeads();
+            const l = leads.find(x=>x.id===id); if(!l) return;
+            l.stage = 'lost';
+            saveLeads(leads); renderLeads(filtered());
+            alert('Marked lost (demo).');
+          });
+        });
+      }
+
+      function filtered(){
+        const q = (document.getElementById('leadSearch').value||'').toLowerCase().trim();
+        const stage = document.getElementById('leadStageFilter').value;
+        return loadLeads().filter(l=>{
+          if(stage !== 'all' && l.stage !== stage) return false;
+          if(!q) return true;
+          return (l.id + ' ' + l.name + ' ' + l.email + ' ' + l.property).toLowerCase().includes(q);
+        });
+      }
+
+      document.getElementById('leadSearch').addEventListener('input', ()=> renderLeads(filtered()));
+      document.getElementById('leadStageFilter').addEventListener('change', ()=> renderLeads(filtered()));
+      document.getElementById('btnClear').addEventListener('click', ()=> { document.getElementById('leadSearch').value=''; document.getElementById('leadStageFilter').value='all'; renderLeads(filtered()); });
+
+      document.getElementById('btnBulkContact').addEventListener('click', ()=>{
+        alert('Contacting selected leads (demo).');
+      });
+      document.getElementById('btnBulkWon').addEventListener('click', ()=>{
+        const leads = loadLeads().map(l=> (l.stage !== 'won' ? (l.stage='won', l) : l));
+        saveLeads(leads); renderLeads(filtered()); alert('Selected marked won (demo).');
+      });
+
+      document.getElementById('btnExportLeads').addEventListener('click', ()=>{
+        const csv = loadLeads().map(l => [l.id,l.name,l.email,l.phone,l.property,l.stage,l.assigned].join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'leads.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      // initial render & session username
+      try { const s = sessionStorage.getItem('pe_session'); if(s) document.getElementById('signedInAs').textContent = 'Signed in as ' + JSON.parse(s).name; } catch(e){}
+      renderLeads(filtered());
+
+      // expose for debug
+      window.__salesDemo = { loadLeads, saveLeads };
+    })();
+  </script>
+</body>
+</html>

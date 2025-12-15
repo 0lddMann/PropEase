@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-role="admin">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Admin Dashboard</div>
+
+    <div class="top-actions">
+      <div class="muted">Signed in as <strong>Admin Demo</strong></div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html" class="active"><span class="icon"><img src="assets/icons/dashboard.png" alt="dashboard"></span>Dashboard</a>
+        <a href="properties.html"><span class="icon"><img src="assets/icons/properties.png" alt="properties"></span>Properties</a>
+        <a href="clients.html"><span class="icon"><img src="assets/icons/clients.png" alt="clients"></span>Clients</a>
+        <a href="leases.html"><span class="icon"><img src="assets/icons/leases.png" alt="leases"></span>Leases</a>
+        <a href="sales.html"><span class="icon"><img src="assets/icons/sales.png" alt="sales"></span>Sales</a>
+        <a href="charts.html"><span class="icon"><img src="assets/icons/charts.png" alt="charts"></span>Charts</a>
+        <a href="mail.html"><span class="icon"><img src="assets/icons/mail.png" alt="mail"></span>Mail</a>
+        <a href="notifications.html"><span class="icon"><img src="assets/icons/notifications.png" alt="notifications"></span>Notifications</a>
+        <a href="settings.html"><span class="icon"><img src="assets/icons/settings.png" alt="settings"></span>Settings</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="assets/icons/support.png" alt="support"></span>Support</div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Admin Overview</h2>
+        <p class="muted">System-wide metrics, pending tasks and quick actions for administrators.</p>
+      </header>
+
+      <section class="panel" style="display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start">
+        <div>
+          <!-- KPI cards -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px">
+            <div class="card" style="padding:12px">
+              <div class="muted">Total Revenue (YTD)</div>
+              <div class="big" id="adminKpiRevenue">$1,234,567</div>
+            </div>
+            <div class="card" style="padding:12px">
+              <div class="muted">Properties</div>
+              <div class="big" id="adminKpiProps">128</div>
+            </div>
+            <div class="card" style="padding:12px">
+              <div class="muted">Active Tenants</div>
+              <div class="big" id="adminKpiTenants">483</div>
+            </div>
+            <div class="card" style="padding:12px">
+              <div class="muted">Agents</div>
+              <div class="big" id="adminKpiAgents">24</div>
+            </div>
+          </div>
+
+          <!-- Charts row -->
+          <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px">
+            <div style="flex:1;min-width:320px;padding:16px;background:#fff;border-radius:12px;">
+              <h4 style="margin:0 0 8px">Revenue Trend</h4>
+              <canvas id="adminLine" width="600" height="260"></canvas>
+            </div>
+
+            <div style="width:360px;min-width:260px;padding:16px;background:#fff;border-radius:12px;">
+              <h4 style="margin:0 0 8px">Occupancy</h4>
+              <canvas id="adminDonut" width="320" height="220"></canvas>
+              <div class="muted" style="margin-top:8px">Overall occupancy across all portfolios</div>
+            </div>
+          </div>
+
+          <!-- Recent activity -->
+          <div class="card" style="padding:12px;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <h4 style="margin:0">Recent Activity</h4>
+              <div class="muted">Live feed</div>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+              <div class="muted">• New property added: Harbor View — 3h ago</div>
+              <div class="muted">• Lease LS-2104 expiring soon — 5h ago</div>
+              <div class="muted">• Payment failed: PMT-3421 — 8h ago</div>
+              <div class="muted">• New client signed up: Jamie Lee — Yesterday</div>
+            </div>
+          </div>
+
+          <!-- Pending approvals -->
+          <div class="card" style="padding:12px">
+            <h4 style="margin:0 0 8px">Pending Approvals</h4>
+            <table class="table" style="min-width:720px">
+              <thead><tr><th>Request</th><th>By</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td>New Listing: Unit 12A</td><td>Agent: Sam K.</td><td>2025-12-01</td><td class="muted">Pending</td><td><button class="btn">Approve</button></td></tr>
+                <tr><td>Lease Change: LS-2102</td><td>Manager: Alex P.</td><td>2025-12-02</td><td class="muted">Review</td><td><button class="btn">Review</button></td></tr>
+                <tr><td>Expense Reimbursement</td><td>Admin: Michelle</td><td>2025-11-30</td><td class="muted">Pending</td><td><button class="btn">Pay</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <aside>
+          <div class="card" style="padding:12px;margin-bottom:12px">
+            <h4 style="margin:0 0 8px">System Health</h4>
+            <div class="muted" style="font-size:13px">All systems operational</div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+              <div><strong>API</strong><div class="muted">200 OK • 120ms</div></div>
+              <div><strong>Payments</strong><div class="muted">Stripe connected</div></div>
+              <div><strong>Emails</strong><div class="muted">SendGrid connected</div></div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:12px;margin-bottom:12px">
+            <h4 style="margin:0 0 8px">Quick Actions</h4>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn">Create Property</button>
+              <button class="btn">Invite User</button>
+              <button class="btn">Generate Report</button>
+              <button class="btn">Export Data</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding:12px">
+            <h4 style="margin:0 0 8px">Top Agents</h4>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between"><div><strong>Agent 1</strong><div class="muted">12 deals</div></div><div class="badge-mini">32%</div></div>
+              <div style="display:flex;justify-content:space-between"><div><strong>Agent 2</strong><div class="muted">9 deals</div></div><div class="badge-mini">24%</div></div>
+              <div style="display:flex;justify-content:space-between"><div><strong>Agent 3</strong><div class="muted">8 deals</div></div><div class="badge-mini">21%</div></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    (function(){
+      const lineEl = document.getElementById('adminLine');
+      const donutEl = document.getElementById('adminDonut');
+
+      // Ensure parent container has explicit height so Chart.js can size correctly
+      const lineContainer = lineEl && lineEl.parentElement;
+      if (lineContainer) lineContainer.style.height = '260px';
+      const donutContainer = donutEl && donutEl.parentElement;
+      if (donutContainer) donutContainer.style.height = '220px';
+
+      if (window.Chart && lineEl) {
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const revenue = [12000,15000,11000,18000,22000,24000,26000,28000,30000,32000,34000,36000];
+
+        // compute sensible upper bound
+        const max = Math.max(...revenue);
+        const suggestedMax = Math.ceil(max * 1.1 / 1000) * 1000; // round up to nearest 1k
+
+        new Chart(lineEl, {
+          type:'line',
+          data:{
+            labels: months,
+            datasets:[{
+              label:'Revenue',
+              data: revenue,
+              borderColor:'#ef4444',
+              backgroundColor:'rgba(239,68,68,0.06)',
+              fill:true,
+              tension:0.32,
+              pointRadius:3
+            }]
+          },
+          options:{
+            maintainAspectRatio:false,
+            plugins:{legend:{display:false}},
+            scales:{
+              y:{
+                beginAtZero: true,
+                suggestedMax: suggestedMax,
+                ticks:{ callback: v => '$' + (v/1000) + 'k' }
+              }
+            }
+          }
+        });
+      }
+
+      if (window.Chart && donutEl) {
+        if (donutEl.parentElement) donutEl.parentElement.style.height = '220px';
+        new Chart(donutEl, {
+          type:'doughnut',
+          data:{ labels:['Occupied','Vacant'], datasets:[{ data:[92,8], backgroundColor:['#10b981','#f97316'] }] },
+          options:{ maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} }
+        });
+      }
+
+      window.refreshAdmin = function(){ if(window.renderCharts) window.renderCharts(); };
+    })();
+  </script>
+</body>
+</html>
