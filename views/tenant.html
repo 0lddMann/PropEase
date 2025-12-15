@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropEase — Tenant</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-role="tenant">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="../assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Tenant Dashboard</div>
+
+    <div class="top-actions">
+      <div class="muted">Signed in as <span id="userName">—</span></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="../assets/logo.jpg" alt="logo" /></div>
+      <nav>
+        <a href="client.html"><span class="icon"><img src="../assets/icons/dashboard.png" alt="dashboard"></span>Home</a>
+        <a href="mail.html"><span class="icon"><img src="../assets/icons/mail.png" alt="mail"></span>Mail</a>
+        <a href="leases.html"><span class="icon"><img src="../assets/icons/leases.png" alt="leases"></span>My Lease</a>
+        <a href="notifications.html"><span class="icon"><img src="../assets/icons/notifications.png" alt="notifications"></span>Notifications</a>
+        <a href="settings.html"><span class="icon"><img src="../assets/icons/settings.png" alt="settings"></span>Settings</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="../assets/icons/support.png" alt="support"></span>Support</div>
+    </aside>
+
+    <main class="main">
+      <div class="search-hero">
+        <div class="search-panel">
+          <div class="search-tabs"><button class="active">Home</button><button>My Lease</button></div>
+          <div class="search-box"><span>🔍</span><input id="mainSearch" placeholder="Search your lease or messages..." /><button id="searchBtn" class="search-btn">Search</button></div>
+        </div>
+      </div>
+
+      <header><h2>Welcome</h2></header>
+
+      <section class="panel" style="display:grid;grid-template-columns:1fr 340px;gap:18px">
+        <div>
+          <div class="card" style="padding:14px">
+            <h4 style="margin:0 0 8px">Current Lease</h4>
+            <div class="muted">Unit 204 — Midtown Residences</div>
+            <div style="margin-top:12px">
+              <strong>Monthly Rent</strong> <div>$1,250</div>
+            </div>
+            <div style="margin-top:12px"><button class="btn primary">Pay Rent</button> <button class="btn">View Lease</button></div>
+          </div>
+
+          <div id="demoContent" style="margin-top:12px"></div>
+
+          <!-- role specific widget (payments) inserted here -->
+          <div id="roleWidget" style="margin-top:12px"></div>
+        </div>
+
+        <aside>
+          <div class="card" style="padding:14px">
+            <h4 style="margin:0 0 8px">Upcoming</h4>
+            <ul style="margin:0;padding-left:16px" class="muted">
+              <li>Rent due: 2025-01-05</li>
+              <li>Maintenance: 2025-01-12</li>
+              <li>Inspection: 2025-01-20</li>
+            </ul>
+          </div>
+
+          <div class="card" style="margin-top:12px;padding:12px">
+            <h4 style="margin:0 0 8px">Quick Links</h4>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn">Contact Manager</button>
+              <button class="btn">Request Repair</button>
+              <button class="btn">Download Invoice</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/script.js"></script>
+  <script> /* demo auto-renders from data-role */ </script>
+</body>
+</html>

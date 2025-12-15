@@ -1,0 +1,661 @@
+/* root passthrough — keep this file so old root HTML still works */
+@import "./src/css/styles.css";
+
+/* fallback tiny rules so blank file doesn't break if import fails */
+body { min-height: 100vh; }
+
+/* Color tokens for the new look (deep-red sidebar, white content) */
+:root{
+  --accent-dark: #6b0f11;
+  --accent: #e02228;
+  --white: #ffffff;
+  --bg: linear-gradient(180deg,var(--white) 0%, #fff5f5 100%);
+  --card-bg: #ffffff;
+  --muted: #6b6b6b;
+  --shadow: 0 14px 36px rgba(0,0,0,0.08);
+  --shadow-soft: 0 8px 22px rgba(0,0,0,0.06);
+  --topbar-h: 84px; /* increased thickness */
+  --sidebar-w: 220px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* reset */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: var(--bg);
+  color:#111;
+  font-family:inherit;
+  font-size:15px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* AUTH styles */
+.auth-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)),
+    url('../assets/login-bg.jpg') center/cover no-repeat;
+  padding:40px 18px;
+}
+.auth-container{width:100%;max-width:980px;padding:0 12px}
+
+/* Ensure auth / index login centers nicely */
+.auth-page, .login-wrapper, .index-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 86px); /* leave space for topbar if present */
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+/* Unique login card */
+.auth-card{
+  --card-radius:18px;
+  position:relative;
+  width:100%;
+  max-width:720px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), #fff);
+  border-radius:var(--card-radius);
+  padding:34px 36px 28px;
+  box-shadow: 0 30px 60px rgba(11,12,13,0.12);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:center;
+  border:1px solid rgba(200,20,20,0.04);
+  backdrop-filter: blur(6px);
+}
+
+/* Login card sizing */
+.login-card, .auth-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* centered logo that slightly overlaps the top */
+.login-logo{
+  width:96px;
+  height:96px;
+  border-radius:14px;
+  object-fit:cover;
+  display:block;
+  margin:-64px 0 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  border:6px solid rgba(255,255,255,0.9);
+  background:linear-gradient(135deg,var(--accent),#a70f11);
+}
+
+/* Headline inside card */
+.auth-card h1{
+  margin:6px 0 2px;
+  font-size:20px;
+  letter-spacing:0.2px;
+  font-weight:600;
+}
+.auth-card .muted{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+/* Form styles - rounded, minimalist */
+.form{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.form label{font-size:13px;color:var(--muted);margin-left:6px}
+.form input,.form select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(16,16,16,0.06);
+  background:linear-gradient(180deg,#fff,#fbfbfb);
+  outline:none;
+  transition:box-shadow .18s,transform .12s;
+  font-size:14px;
+}
+.form input:focus,.form select:focus{
+  box-shadow:0 10px 30px rgba(216,35,35,0.08);
+  transform:translateY(-2px);
+  border-color:rgba(216,35,35,0.18);
+}
+
+/* unique CTA */
+.btn.primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px 18px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),#c82228);
+  color:var(--white);
+  font-weight:700;
+  box-shadow:0 12px 34px rgba(200,20,20,0.18);
+  border:0;
+  cursor:pointer;
+  transition:transform .12s,box-shadow .12s;
+}
+.btn.primary:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(200,20,20,0.22);}
+
+/* descriptive text under the card (outside the login box) */
+.auth-note{
+  max-width:900px;
+  margin:18px auto 0;
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+  padding:6px 12px;
+}
+
+/* Topbar (fixed) */
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--topbar-h);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 22px;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  color: var(--white);
+  justify-content:space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  z-index:140; /* ensure it sits above the sidebar */
+  transition:box-shadow .18s ease, transform .12s ease;
+}
+
+/* layout wrapper */
+.layout{display:flex;min-height:calc(100vh - var(--topbar-h)); padding-top: var(--topbar-h);}
+
+/* Sidebar (fixed under topbar) */
+.sidebar{
+  width:var(--sidebar-w);
+  background: var(--accent-dark);
+  color:var(--white);
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  border-right:1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow-soft);
+  position:fixed;
+  top:var(--topbar-h); /* remains pinned below the fixed topbar */
+  left:0;
+  bottom:0;
+  z-index:50;
+}
+.brand-mini{width:56px;height:56px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent),#a70f11)}
+.brand-mini img{width:100%;height:100%;object-fit:cover}
+.sidebar nav a{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 10px;
+  border-radius:10px;
+  color:rgba(255,255,255,0.93);
+  text-decoration:none;
+  margin-bottom:8px;
+}
+.sidebar nav a .icon{
+  width:40px;
+  height:40px;
+  min-width:40px;
+  border-radius:50%;
+  background:#fff;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 18px rgba(0,0,0,0.06);
+  padding:6px;
+}
+.sidebar nav a .icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.sidebar nav a.active{
+  background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  font-weight:600;
+}
+/* ensure sidebar is column so support sits at bottom */
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  padding:18px 12px;
+  gap:12px;
+}
+
+/* support row styling (kept at bottom) */
+.sidebar .support{
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 6px;
+  color:var(--muted);
+  font-weight:600;
+  border-radius:8px;
+}
+
+/* safety: ensure brand-mini doesn't inherit large image sizes */
+.brand-mini img,
+.site-logo{
+  max-width:46px;
+  height:auto;
+  display:block;
+}
+
+/* fallback: constrain any sidebar images to not overflow */
+.sidebar img{max-width:100%;height:auto;display:block}
+
+/* Main content area */
+.main{
+  margin-left: var(--sidebar-w);
+  flex:1;
+  padding:34px;
+  background:transparent;
+  min-height: calc(100vh - var(--topbar-h));
+  box-sizing:border-box;
+}
+
+/* Hero / search area (shared) */
+.search-hero{
+  background: url('../assets/hero.jpg') center/cover no-repeat;
+  border-radius:14px;
+  padding:34px;
+  position:relative;
+  min-height:140px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: var(--shadow);
+  overflow:hidden;
+  margin-bottom:22px;
+}
+.search-hero::after{
+  content:'';
+  position:absolute;inset:0;background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
+}
+.search-panel{
+  position:relative;z-index:2;width:100%;max-width:980px;
+}
+.search-tabs{display:flex;gap:10px;justify-content:flex-start;margin-bottom:14px}
+.search-tabs button{background:transparent;border:0;padding:8px 12px;border-radius:999px;font-weight:600;cursor:pointer}
+.search-tabs button.active{background:var(--white);box-shadow:var(--shadow-soft);color:var(--accent-dark)}
+.search-box{display:flex;gap:8px;align-items:center;background:var(--white);border-radius:12px;padding:10px 12px;box-shadow:0 10px 28px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.04)}
+.search-box input{border:0;outline:0;background:transparent;padding:10px;font-size:15px;width:100%}
+.search-btn{background:linear-gradient(90deg,var(--accent),#c82228);color:var(--white);padding:10px 14px;border-radius:10px;border:0;cursor:pointer;}
+
+/* Cards / panels */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:18px}
+.card, .panel{
+  background: var(--card-bg);
+  padding:18px;
+  border-radius:14px;
+  box-shadow: var(--shadow);
+  margin-bottom:18px;
+  color: #111;
+  border:1px solid rgba(13,13,13,0.02);
+  transform-origin:center;
+  animation: floatUp .45s ease both;
+}
+.card h3{margin:0;color:#222;font-size:14px}
+.card .big{font-size:22px;font-weight:700;margin-top:8px; color:var(--accent-dark)}
+
+.badge{padding:6px 10px;border-radius:999px;font-weight:700;background:linear-gradient(90deg,var(--accent),#b5171b);color:var(--white)}
+.btn{padding:10px 14px;border-radius:10px;border:0;background:#f3f4f6;cursor:pointer;color:#111}
+.btn.primary{background:linear-gradient(90deg,var(--accent),#c82228);color:var(--white);box-shadow:var(--shadow-soft)}
+.muted{color:var(--muted)}
+
+/* avatars and small UI polish */
+.avatar {
+  width:44px;height:44px;border-radius:10px;overflow:hidden;display:inline-block;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);background:#fff;
+}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* small placeholder fallback (SVG data URL) */
+.img-placeholder{
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='360'><rect width='100%' height='100%' rx='10' fill='%23f4f4f6'/><g fill='%23d1d5db'><rect x='36' y='36' width='148' height='100' rx='8'/><rect x='200' y='44' width='340' height='22' rx='6'/><rect x='200' y='76' width='280' height='14' rx='6'/><rect x='200' y='98' width='180' height='14' rx='6'/></g></svg>");
+  background-size:cover;
+}
+
+/* table polish */
+.table{width:100%;border-collapse:collapse;background:transparent}
+.table th,.table td{padding:12px;border-bottom:1px solid rgba(15,15,15,0.04);text-align:left}
+.table th{font-weight:600;color:#333;background:transparent}
+.table tr:hover td{background:rgba(0,0,0,0.02)}
+.table .muted{color:var(--muted);font-size:13px}
+
+/* compact widgets for role sections */
+.role-widget{display:flex;flex-direction:column;gap:12px}
+.role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start}
+
+/* small badges */
+.badge-mini{display:inline-block;padding:6px 10px;border-radius:999px;background:#f3f4f6;font-weight:700;color:#111;font-size:13px;box-shadow:0 8px 22px rgba(0,0,0,0.04)}
+
+/* animations */
+@keyframes floatUp{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+.cards .card:nth-child(1){animation-delay:0s}
+.cards .card:nth-child(2){animation-delay:0.06s}
+.cards .card:nth-child(3){animation-delay:0.12s}
+.cards .card:nth-child(4){animation-delay:0.18s}
+
+/* overlay for mobile sidebar */
+.sidebar-overlay{
+  position:fixed;
+  top:var(--topbar-h);
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.35);
+  z-index:65;
+  display:none;
+}
+
+/* mobile: show sidebar when .open set by JS */
+@media(max-width:700px){
+  .sidebar{display:none}
+  .sidebar.open{
+    display:block;
+    position:fixed;
+    top:var(--topbar-h);
+    left:0;
+    bottom:0;
+    width:var(--sidebar-w);
+    z-index:70;
+    box-shadow:0 18px 40px rgba(0,0,0,0.18);
+  }
+}
+
+/* responsive */
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.main{padding:16px}}
+@media(max-width:700px){
+  .topbar{padding:0 12px}
+  .layout{flex-direction:column;min-height:unset;padding-top:0}
+  .sidebar{display:none;position:static;width:100%}
+  .main{margin-left:0}
+  .cards{grid-template-columns:repeat(1,1fr)}
+  .grid{grid-template-columns:repeat(1,1fr)}
+}
+
+/* Cubao Wide font (place CubaoWide.woff2 in src/fonts/) */
+@font-face{
+  font-family: 'CubaoWide';
+  src: url('../fonts/CubaoWide.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Topbar brand header */
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 18px;
+  background:transparent; /* keep existing visual */
+  justify-content:space-between;
+}
+.brand-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family: 'CubaoWide', 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color:#c8102e; /* red */
+  font-weight:700;
+  letter-spacing:1px;
+  font-size:18px;
+  text-transform:uppercase;
+}
+.brand-header .site-logo--small{
+  width:46px;
+  height:46px;
+  border-radius:10px;
+  object-fit:cover;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  background:#fff;
+  border:4px solid rgba(255,255,255,0.9);
+}
+
+/* Brand under logo for index */
+.index-brand {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  margin-bottom:18px;
+}
+.index-brand img.site-logo--large{
+  width:88px;
+  height:88px;
+  border-radius:14px;
+  object-fit:cover;
+  box-shadow:0 12px 30px rgba(0,0,0,0.08);
+  background:#fff;
+  padding:6px;
+}
+.index-brand .brand-text {
+  font-family: 'CubaoWide', 'Poppins', sans-serif;
+  color: #c8102e;
+  font-weight:700;
+  letter-spacing:1px;
+  font-size:18px;
+  text-transform:uppercase;
+}
+
+/* small-screen tweak */
+@media(max-width:600px){
+  .index-brand .brand-text{font-size:15px}
+  .index-brand img.site-logo--large{width:72px;height:72px}
+}
+
+/* responsive: slightly smaller on small screens */
+@media(max-width:700px){
+  .brand-header{font-size:15px}
+  .brand-header .site-logo--small{width:40px;height:40px}
+}
+
+/* ensure top-actions stays right */
+.topbar .top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+/* --- header / brand fixes (non-invasive) --- */
+.topbar {
+  /* keep existing look but ensure contrast for brand */
+  background: linear-gradient(90deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95));
+  color: var(--text);
+}
+
+/* Brand block inside topbar */
+.topbar .brand-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* logo sizing + remove any visible white box */
+.topbar .brand-header .site-logo--small {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* brand text */
+.topbar .brand-header .brand-text {
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  color: var(--accent);
+}
+
+/* keep top-actions visible on the right */
+.topbar .top-actions { margin-left: auto; display:flex; gap:10px; align-items:center; }
+
+/* Override topbar to match sidebar (dark red) and ensure controls are visible */
+.topbar {
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  color: var(--white) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* hamburger: white, circular touch target */
+.topbar .hamburger {
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--white);
+  font-size:20px;
+  cursor:pointer;
+}
+
+/* brand text and logo on dark bar */
+.topbar .brand-header,
+.topbar .top-title {
+  color: var(--white);
+}
+.topbar .brand-header .site-logo--small {
+  background: transparent;
+  border: 3px solid rgba(255,255,255,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* keep top-actions readable on dark background */
+.topbar .top-actions .muted { color: rgba(255,255,255,0.85); }
+.topbar .top-actions .btn { background: rgba(255,255,255,0.06); color:var(--white); border:1px solid rgba(255,255,255,0.06); }
+
+/* ===== Overrides: keep these compact and last so they win ===== */
+
+/* Ensure topbar is fixed, thicker, and visually matches the sidebar */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  color: var(--white);
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  z-index: 140;
+}
+
+/* Keep main content and layout pushed below the fixed topbar */
+.layout {
+  padding-top: var(--topbar-h);
+}
+
+/* Hamburger: clear touch-target and visible on dark bar */
+.topbar .hamburger {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  color: var(--white);
+  font-size: 20px;
+  border: 0;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* Ensure brand (logo + text) looks good on dark bar */
+.topbar .brand-header,
+.topbar .top-title {
+  color: var(--white);
+}
+.topbar .brand-header .site-logo--small {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: transparent;
+  border: 3px solid rgba(255,255,255,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* Top-actions readable on dark background */
+.topbar .top-actions .muted { color: rgba(255,255,255,0.85); }
+.topbar .top-actions .btn { background: rgba(255,255,255,0.06); color: var(--white); border:1px solid rgba(255,255,255,0.06); }
+
+/* ===== Sidebar support icon: match other nav icons ===== */
+
+/* Ensure support row text matches sidebar color */
+.sidebar .support {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 6px;
+  color: rgba(255,255,255,0.92);
+  font-weight: 600;
+  border-radius: 8px;
+  background: transparent;
+}
+
+/* Create a white circular icon background like nav icons */
+.sidebar .support .icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+  padding: 6px;
+}
+
+/* Scale the image inside the circle to match other icons */
+.sidebar .support .icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Small safeguard: if support used an SVG as background, center it */
+.sidebar .support .icon svg { width: 20px; height: 20px; }
+
+/* If layout uses a support label next to icon, keep spacing consistent */
+.sidebar .support .support-label { font-size: 13px; color: rgba(255,255,255,0.9); }
+
+/* ===== small-screen tweak: keep topbar compact ===== */
+@media (max-width: 900px) {
+  .topbar { padding: 10px 14px; }
+  .topbar .brand-header { display: none; }
+}

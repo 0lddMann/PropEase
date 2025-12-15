@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropEase — Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-role="notifications">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="../assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Notifications</div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="../assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="../assets/icons/dashboard.png" alt=""></span>Dashboard</a>
+        <a href="mail.html"><span class="icon"><img src="../assets/icons/mail.png" alt=""></span>Mail</a>
+        <a href="notifications.html" class="active"><span class="icon"><img src="../assets/icons/notifications.png" alt=""></span>Notifications</a>
+        <a href="settings.html"><span class="icon"><img src="../assets/icons/settings.png" alt=""></span>Settings</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="../assets/icons/support.png" alt="support"></span>Support</div>
+    </aside>
+
+    <main class="main">
+      <header><h2>Recent Notifications</h2></header>
+
+      <section class="panel">
+        <div class="card" style="padding:12px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:48px;height:48px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center">🔔</div>
+              <div style="flex:1">
+                <div style="display:flex;justify-content:space-between"><strong>System Maintenance</strong><span class="muted">1h ago</span></div>
+                <div class="muted">Scheduled maintenance on 2025-01-12 from 01:00 to 03:00 AM. Some services may be unavailable.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:48px;height:48px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center">📬</div>
+              <div style="flex:1">
+                <div style="display:flex;justify-content:space-between"><strong>New Message</strong><span class="muted">2h ago</span></div>
+                <div class="muted">You have a message from Manager - regarding your maintenance request.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:48px;height:48px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center">✅</div>
+              <div style="flex:1">
+                <div style="display:flex;justify-content:space-between"><strong>Lease Renewed</strong><span class="muted">Yesterday</span></div>
+                <div class="muted">Lease for Unit 101 has been renewed for 12 months.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:48px;height:48px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center">⚠️</div>
+              <div style="flex:1">
+                <div style="display:flex;justify-content:space-between"><strong>Payment Failed</strong><span class="muted">2 days ago</span></div>
+                <div class="muted">A tenant payment failed: PMT-3421. Please review and retry.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script src="../js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Leases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-role="leases">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="../assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Leases</div>
+
+    <div class="top-actions">
+      <div class="muted" id="signedInAs">Signed in</div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="../assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="../assets/icons/dashboard.png" alt=""></span>Dashboard</a>
+        <a href="properties.html"><span class="icon"><img src="../assets/icons/properties.png" alt=""></span>Properties</a>
+        <a href="leases.html" class="active"><span class="icon"><img src="../assets/icons/leases.png" alt=""></span>Leases</a>
+        <a href="clients.html"><span class="icon"><img src="../assets/icons/clients.png" alt=""></span>Clients</a>
+        <a href="mail.html"><span class="icon"><img src="../assets/icons/mail.png" alt=""></span>Mail</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="../assets/icons/support.png" alt="support"></span>Help</div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Lease Management</h2>
+        <p class="muted">View and manage lease records, renewals and payment status.</p>
+      </header>
+
+      <section class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="leaseSearch" placeholder="Search tenant, property or lease ID" style="padding:10px;border-radius:8px;border:1px solid #eee;width:360px"/>
+            <select id="leaseStatusFilter" style="padding:10px;border-radius:8px;border:1px solid #eee">
+              <option value="all">All statuses</option>
+              <option value="active">Active</option>
+              <option value="expiring">Expiring Soon</option>
+              <option value="expired">Expired</option>
+            </select>
+            <button id="btnFilterClear" class="btn">Clear</button>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button id="btnNewLease" class="btn">New Lease</button>
+            <button id="btnExportLeases" class="btn">Export</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:8px;overflow:auto">
+          <table class="table" style="width:100%;min-width:980px">
+            <thead>
+              <tr>
+                <th>Lease ID</th>
+                <th>Tenant</th>
+                <th>Property / Unit</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Rent</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="leasesTableBody"></tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end">
+          <div class="muted" id="leasesSummary">—</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Simple modal for lease details -->
+  <div id="leaseModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;z-index:120">
+    <div style="background:#fff;border-radius:10px;padding:18px;max-width:720px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.25)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 id="leaseModalTitle" style="margin:0">Lease</h3>
+        <button id="leaseModalClose" class="btn">Close</button>
+      </div>
+      <div id="leaseModalBody" style="margin-top:12px;color:#333"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+        <button id="leaseModalRenew" class="btn primary">Renew</button>
+        <button id="leaseModalDownload" class="btn">Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/script.js"></script>
+  <script>
+    (function(){
+      // sample leases
+      const leases = [
+        { id:'LS-2101', tenant:'Alex Porter', email:'alex@demo.com', property:'Midtown Residences', unit:'204', start:'2024-01-01', end:'2025-01-01', rent:1250, balance:0, status:'active'},
+        { id:'LS-2102', tenant:'Jamie Lee', email:'jamie@demo.com', property:'Riverside Tower', unit:'110', start:'2023-09-15', end:'2024-09-14', rent:1450, balance:290, status:'expiring'},
+        { id:'LS-2103', tenant:'Rita Gomez', email:'rita@demo.com', property:'Oakwood Apartments', unit:'7B', start:'2024-02-10', end:'2025-02-09', rent:980, balance:0, status:'active'},
+        { id:'LS-2104', tenant:'Michael C.', email:'michael@demo.com', property:'Harbor View', unit:'302', start:'2023-12-01', end:'2024-11-30', rent:2200, balance:450, status:'expiring'}
+      ];
+
+      const tbody = document.getElementById('leasesTableBody');
+      const summaryEl = document.getElementById('leasesSummary');
+      const searchInput = document.getElementById('leaseSearch');
+      const statusFilter = document.getElementById('leaseStatusFilter');
+
+      function formatMoney(n){ return '$' + Number(n).toLocaleString(); }
+
+      function renderRows(list){
+        tbody.innerHTML = list.map(l => `
+          <tr data-id="${l.id}">
+            <td>${l.id}</td>
+            <td><strong>${l.tenant}</strong><div class="muted" style="font-size:12px">${l.email}</div></td>
+            <td>${l.property} — ${l.unit}</td>
+            <td>${l.start}</td>
+            <td>${l.end}</td>
+            <td>${formatMoney(l.rent)}</td>
+            <td>${formatMoney(l.balance)}</td>
+            <td class="muted">${l.status.charAt(0).toUpperCase() + l.status.slice(1)}</td>
+            <td>
+              <button class="btn btn-view">View</button>
+              <button class="btn btn-pay">Payment History</button>
+            </td>
+          </tr>
+        `).join('');
+        attachRowActions();
+        renderSummary(list);
+      }
+
+      function renderSummary(list){
+        const total = list.length;
+        const active = list.filter(l=>l.status==='active').length;
+        const expiring = list.filter(l=>l.status==='expiring').length;
+        summaryEl.textContent = `Total: ${total} • Active: ${active} • Expiring soon: ${expiring}`;
+      }
+
+      function attachRowActions(){
+        tbody.querySelectorAll('.btn-view').forEach(b=>{
+          b.addEventListener('click', ev=>{
+            const row = ev.currentTarget.closest('tr');
+            const id = row && row.dataset && row.dataset.id;
+            const lease = leases.find(x=>x.id===id);
+            showLease(lease);
+          });
+        });
+        tbody.querySelectorAll('.btn-pay').forEach(b=>{
+          b.addEventListener('click', ev=>{
+            const row = ev.currentTarget.closest('tr');
+            const id = row && row.dataset && row.dataset.id;
+            alert('Open payment history for ' + id + ' (demo)');
+          });
+        });
+      }
+
+      // Modal handling
+      const modal = document.getElementById('leaseModal');
+      function showLease(lease){
+        if(!lease) return;
+        document.getElementById('leaseModalTitle').textContent = lease.id + ' — ' + lease.tenant;
+        document.getElementById('leaseModalBody').innerHTML = `
+          <div><strong>Property:</strong> ${lease.property} — ${lease.unit}</div>
+          <div><strong>Period:</strong> ${lease.start} → ${lease.end}</div>
+          <div><strong>Monthly Rent:</strong> ${formatMoney(lease.rent)}</div>
+          <div><strong>Balance:</strong> ${formatMoney(lease.balance)}</div>
+          <div style="margin-top:8px" class="muted">Status: ${lease.status}</div>
+        `;
+        modal.style.display = 'flex';
+        // context actions
+        document.getElementById('leaseModalRenew').onclick = function(){
+          alert('Renew lease ' + lease.id + ' (demo)');
+          modal.style.display = 'none';
+        };
+        document.getElementById('leaseModalDownload').onclick = function(){
+          alert('Download PDF (demo)');
+        };
+      }
+      document.getElementById('leaseModalClose').addEventListener('click', ()=> modal.style.display='none');
+      modal.addEventListener('click', ev => { if(ev.target === modal) modal.style.display='none'; });
+
+      // filters
+      function filtered(){
+        const q = (searchInput.value||'').toLowerCase().trim();
+        const status = (statusFilter.value||'all').toLowerCase();
+        return leases.filter(l=>{
+          if(status !== 'all' && l.status !== status) return false;
+          if(!q) return true;
+          return (l.id + ' ' + l.tenant + ' ' + l.property + ' ' + l.unit).toLowerCase().includes(q);
+        });
+      }
+
+      searchInput.addEventListener('input', ()=> renderRows(filtered()));
+      statusFilter.addEventListener('change', ()=> renderRows(filtered()));
+      document.getElementById('btnFilterClear').addEventListener('click', ()=>{
+        searchInput.value=''; statusFilter.value='all'; renderRows(filtered());
+      });
+
+      // New lease / export handlers (demo)
+      document.getElementById('btnNewLease').addEventListener('click', ()=> alert('Open new lease form (demo)'));
+      document.getElementById('btnExportLeases').addEventListener('click', ()=>{
+        const csv = leases.map(r => [r.id, r.tenant, r.property, r.unit, r.start, r.end, r.rent, r.balance, r.status].join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'leases.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      // initial render
+      renderRows(leases);
+
+      // display signed-in user if available
+      try {
+        const s = sessionStorage.getItem('pe_session');
+        if(s) document.getElementById('signedInAs').textContent = 'Signed in as ' + JSON.parse(s).name;
+      } catch(e){}
+      window.__demoLeases = leases;
+    })();
+  </script>
+</body>
+</html>
