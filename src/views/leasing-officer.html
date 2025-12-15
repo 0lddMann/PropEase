@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Leasing Officer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* small scoped helpers */
+    .payments-grid { display:grid; grid-template-columns:1fr 360px; gap:16px; }
+    .payment-row{ display:flex; justify-content:space-between; gap:12px; align-items:center; padding:10px;border-bottom:1px solid rgba(0,0,0,0.04) }
+    .status-pill{ padding:6px 8px; border-radius:999px; font-weight:600; font-size:13px }
+    .status-paid{ background:#ecfdf5; color:#15803d }
+    .status-due{ background:#fff7ed; color:#92400e }
+    .small{ font-size:13px }
+  </style>
+</head>
+<body data-role="leasing-officer">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="../assets/logo.jpg" class="site-logo--small" alt="logo">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Leasing Officer</div>
+
+    <div class="top-actions">
+      <div class="muted" id="signedInAs">Signed in</div>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="../assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="leases.html"><span class="icon"><img src="../assets/icons/leases.png" alt=""></span>Leases</a>
+        <a href="properties.html"><span class="icon"><img src="../assets/icons/properties.png" alt=""></span>Properties</a>
+        <a href="tenants.html"><span class="icon"><img src="../assets/icons/clients.png" alt=""></span>Tenants</a>
+      </nav>
+
+      <div class="support">
+        <div class="icon"><img src="../assets/icons/support.png" alt="support"></div>
+        <div class="support-label">Help</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header>
+        <h2>Tenant Payments & Lease Management</h2>
+        <p class="muted">Process payments, send lease notifications and manage tenant leases.</p>
+      </header>
+
+      <section class="panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="searchTenant" placeholder="Search tenant or lease ID" style="padding:10px;border-radius:8px;border:1px solid #eee;width:360px"/>
+            <select id="filterStatus" style="padding:10px;border-radius:8px;border:1px solid #eee">
+              <option value="all">All</option>
+              <option value="due">Due</option>
+              <option value="paid">Paid</option>
+            </select>
+            <button id="btnClearFilter" class="btn">Clear</button>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button id="btnExport" class="btn">Export</button>
+          </div>
+        </div>
+
+        <div class="payments-grid">
+          <div class="card" style="padding:8px; overflow:auto">
+            <div id="paymentsList"></div>
+          </div>
+
+          <aside>
+            <div class="card" style="padding:12px;margin-bottom:12px">
+              <h4 style="margin:0 0 8px">Quick actions</h4>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button id="btnSendNotices" class="btn primary">Send Lease Notices</button>
+                <button id="btnMarkAllPaid" class="btn">Mark All Due as Paid</button>
+              </div>
+            </div>
+
+            <div class="card" style="padding:12px">
+              <h4 style="margin:0 0 8px">Notifications log</h4>
+              <div id="notificationsLog" class="muted small">No notifications yet.</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/script.js"></script>
+  <script>
+    (function(){
+      // demo leases/payments (can be replaced by pe_leases localStorage)
+      const demoLeases = [
+        { id:'LS-2101', tenant:'Alex Porter', email:'alex@demo.com', property:'Midtown Residences', unit:'204', rent:1250, balance:0, status:'paid' },
+        { id:'LS-2102', tenant:'Jamie Lee', email:'jamie@demo.com', property:'Riverside Tower', unit:'110', rent:1450, balance:290, status:'due' },
+        { id:'LS-2104', tenant:'Michael C.', email:'michael@demo.com', property:'Harbor View', unit:'302', rent:2200, balance:450, status:'due' },
+      ];
+
+      const STORAGE_LEASES = 'pe_leases';
+      const STORAGE_NOTIF = 'pe_notifications';
+
+      function loadLeases(){ try { return JSON.parse(localStorage.getItem(STORAGE_LEASES)) || demoLeases; } catch(e){ return demoLeases; } }
+      function saveLeases(arr){ localStorage.setItem(STORAGE_LEASES, JSON.stringify(arr)); }
+
+      function loadNotifs(){ try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF)) || []; } catch(e){ return []; } }
+      function saveNotifs(arr){ localStorage.setItem(STORAGE_NOTIF, JSON.stringify(arr)); }
+
+      function renderPayments(list){
+        const el = document.getElementById('paymentsList');
+        if(!list.length){ el.innerHTML = '<div class="muted">No leases found.</div>'; return; }
+        el.innerHTML = list.map(l => `
+          <div class="payment-row">
+            <div style="flex:1">
+              <div><strong>${l.tenant}</strong> <span class="muted small">(${l.email})</span></div>
+              <div class="muted small">${l.property} — Unit ${l.unit} • Lease ${l.id}</div>
+            </div>
+            <div style="width:180px;text-align:right">
+              <div><strong>$${Number(l.rent).toLocaleString()}</strong></div>
+              <div style="margin-top:6px"><span class="status-pill ${l.status==='paid' ? 'status-paid' : 'status-due'}">${l.status.toUpperCase()}</span></div>
+              <div style="margin-top:8px">
+                ${l.status==='due' ? `<button class="btn btn-record" data-id="${l.id}">Record Payment</button>` : `<button class="btn btn-receipt" data-id="${l.id}">Receipt</button>`}
+                <button class="btn btn-notify" data-id="${l.id}">Notify</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        attachActions();
+      }
+
+      function attachActions(){
+        document.querySelectorAll('.btn-record').forEach(b=>{
+          b.addEventListener('click', e=>{
+            const id = b.dataset.id; const leases = loadLeases();
+            const lease = leases.find(x=>x.id===id); if(!lease) return;
+            lease.status = 'paid'; lease.balance = 0;
+            saveLeases(leases); renderPayments(filtered());
+            alert('Payment recorded (demo).');
+          });
+        });
+        document.querySelectorAll('.btn-receipt').forEach(b=>{
+          b.addEventListener('click', e=> alert('Open receipt for ' + b.dataset.id + ' (demo)'));
+        });
+        document.querySelectorAll('.btn-notify').forEach(b=>{
+          b.addEventListener('click', e=>{
+            const id = b.dataset.id; const leases = loadLeases(); const lease = leases.find(x=>x.id===id);
+            if(!lease) return;
+            const notifs = loadNotifs();
+            const note = { id: Date.now(), leaseId: id, to: lease.email, message: `Notice for lease ${id}`, created: new Date().toISOString() };
+            notifs.unshift(note); saveNotifs(notifs);
+            renderNotifications();
+            alert('Notification queued (demo).');
+          });
+        });
+      }
+
+      function renderNotifications(){
+        const n = loadNotifs();
+        const el = document.getElementById('notificationsLog');
+        if(!n.length){ el.innerHTML = '<div class="muted small">No notifications yet.</div>'; return; }
+        el.innerHTML = n.slice(0,6).map(x=>`<div style="padding:6px 0"><strong>${x.to}</strong><div class="muted small">${x.message} • ${x.created.slice(0,10)}</div></div>`).join('');
+      }
+
+      function filtered(){
+        const q = (document.getElementById('searchTenant').value||'').toLowerCase().trim();
+        const status = document.getElementById('filterStatus').value;
+        return loadLeases().filter(l=>{
+          if(status !== 'all' && l.status !== status) return false;
+          if(!q) return true;
+          return (l.tenant + ' ' + l.email + ' ' + l.id + ' ' + l.property).toLowerCase().includes(q);
+        });
+      }
+
+      document.getElementById('searchTenant').addEventListener('input', ()=> renderPayments(filtered()));
+      document.getElementById('filterStatus').addEventListener('change', ()=> renderPayments(filtered()));
+      document.getElementById('btnClearFilter').addEventListener('click', ()=> { document.getElementById('searchTenant').value=''; document.getElementById('filterStatus').value='all'; renderPayments(filtered()); });
+
+      document.getElementById('btnSendNotices').addEventListener('click', ()=>{
+        const leases = loadLeases().filter(l=>l.status==='due');
+        const notifs = loadNotifs();
+        leases.forEach(l => notifs.unshift({ id: Date.now()+Math.random(), leaseId: l.id, to: l.email, message: `Automatic rent reminder for ${l.id}`, created: new Date().toISOString() }));
+        saveNotifs(notifs); renderNotifications(); alert('Notices queued (demo).');
+      });
+
+      document.getElementById('btnMarkAllPaid').addEventListener('click', ()=>{
+        const leases = loadLeases(); leases.forEach(l=>{ if(l.status==='due'){ l.status='paid'; l.balance=0; } }); saveLeases(leases); renderPayments(filtered()); alert('All due leases marked paid (demo).');
+      });
+
+      document.getElementById('btnExport').addEventListener('click', ()=>{
+        const csv = loadLeases().map(l => [l.id,l.tenant,l.email,l.property,l.unit,l.rent,l.status].join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'leases.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      // initial
+      try { const s = sessionStorage.getItem('pe_session'); if(s) document.getElementById('signedInAs').textContent = 'Signed in as ' + JSON.parse(s).name; } catch(e){}
+      renderPayments(filtered());
+      renderNotifications();
+
+      // expose for debug
+      window.__leasingDemo = { loadLeases, loadNotifs };
+    })();
+  </script>
+</body>
+</html>

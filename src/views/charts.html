@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropEase — Charts</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-role="charts">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="../assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Charts</div>
+    <div class="top-actions"></div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="../assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="../assets/icons/dashboard.png" alt=""></span>Dashboard</a>
+        <a href="charts.html" class="active"><span class="icon"><img src="../assets/icons/charts.png" alt=""></span>Charts</a>
+        <a href="sales.html"><span class="icon"><img src="../assets/icons/sales.png" alt=""></span>Sales</a>
+        <a href="mail.html"><span class="icon"><img src="../assets/icons/mail.png" alt=""></span>Mail</a>
+        <a href="notifications.html"><span class="icon"><img src="../assets/icons/notifications.png" alt=""></span>Notifications</a>
+        <a href="settings.html"><span class="icon"><img src="../assets/icons/settings.png" alt=""></span>Settings</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="../assets/icons/support.png" alt="support"></span>Support</div>
+    </aside>
+
+    <main class="main">
+      <header><h2>Analytics</h2><p class="muted">High level metrics and trends across listings, leases and revenue.</p></header>
+
+      <section class="panel" style="display:flex;flex-direction:column;gap:18px;">
+        <!-- KPI row -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+          <div class="card" style="padding:14px">
+            <div class="muted">Total Revenue (YTD)</div>
+            <div id="kpiRevenue" style="font-size:20px;font-weight:800;margin-top:8px">$0</div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div class="muted">Average Rent</div>
+            <div id="kpiAvgRent" style="font-size:20px;font-weight:800;margin-top:8px">$0</div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div class="muted">Occupancy Rate</div>
+            <div id="kpiOccupancy" style="font-size:20px;font-weight:800;margin-top:8px">0%</div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div class="muted">New Leads (30d)</div>
+            <div id="kpiLeads" style="font-size:20px;font-weight:800;margin-top:8px">0</div>
+          </div>
+        </div>
+
+        <!-- charts row -->
+        <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:stretch;">
+          <div style="flex:1;min-width:320px;padding:18px;background:#fff;border-radius:12px;">
+            <h4 style="margin:0 0 8px">Activity Distribution</h4>
+            <canvas id="donutChart" width="400" height="260"></canvas>
+            <div id="donutLegend" style="margin-top:10px;color:var(--muted);font-size:14px"></div>
+          </div>
+
+          <div style="flex:1.2;min-width:420px;padding:18px;background:#fff;border-radius:12px;">
+            <h4 style="margin:0 0 8px">Revenue Trend (Monthly)</h4>
+            <canvas id="lineChart" width="600" height="260"></canvas>
+          </div>
+
+          <div style="width:420px;min-width:300px;padding:18px;background:#fff;border-radius:12px;">
+            <h4 style="margin:0 0 8px">Deals by Channel</h4>
+            <canvas id="barChart" width="420" height="260"></canvas>
+          </div>
+        </div>
+
+        <!-- top properties table -->
+        <div class="card" style="padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <h4 style="margin:0">Top Properties</h4>
+            <div class="muted">Updated just now</div>
+          </div>
+
+          <div style="overflow:auto">
+            <table class="table" aria-label="top-properties" style="min-width:880px">
+              <thead>
+                <tr><th>Property</th><th>City</th><th>Units</th><th>Occupancy</th><th>Monthly Income</th><th>Leases</th></tr>
+              </thead>
+              <tbody id="topPropertiesBody">
+                <!-- populated by script.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/script.js"></script>
+<script>
+  // allow script.js to render charts on load
+  // renderCharts() is invoked by script.js on DOMContentLoaded
+</script>
+</body></html>

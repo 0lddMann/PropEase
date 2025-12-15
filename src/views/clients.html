@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PropEase — Clients</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-role="clients">
+  <div class="topbar">
+    <button class="hamburger" aria-label="menu">☰</button>
+
+    <div class="brand-header">
+      <img src="../assets/logo.jpg" class="site-logo--small" alt="RACERSREALESTATE.CO">
+      <div class="brand-text">RACERSREALESTATE.CO</div>
+    </div>
+
+    <div class="top-title">Clients</div>
+
+    <div class="top-actions">
+      <div class="muted">Signed in as <span id="userName">—</span></div>
+      <button id="logoutBtn" class="btn">Logout</button>
+      <button class="btn primary">JOIN</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-mini"><img src="../assets/logo.jpg" alt="logo"></div>
+      <nav>
+        <a href="admin.html"><span class="icon"><img src="../assets/icons/dashboard.png" alt="dashboard"></span>Dashboard</a>
+        <a href="mail.html"><span class="icon"><img src="../assets/icons/mail.png" alt="mail"></span>Mail</a>
+        <a href="properties.html"><span class="icon"><img src="../assets/icons/properties.png" alt="properties"></span>Properties</a>
+        <a href="clients.html" class="active"><span class="icon"><img src="../assets/icons/clients.png" alt="clients"></span>Clients</a>
+        <a href="notifications.html"><span class="icon"><img src="../assets/icons/notifications.png" alt="notifications"></span>Notifications</a>
+        <a href="settings.html"><span class="icon"><img src="../assets/icons/settings.png" alt="settings"></span>Settings</a>
+      </nav>
+      <div class="support"><span class="icon"><img src="../assets/icons/support.png" alt="support"></span>Support</div>
+    </aside>
+
+    <main class="main">
+      <div class="search-hero">
+        <div class="search-panel">
+          <div class="search-tabs" role="tablist">
+            <button class="active">All</button>
+            <button>Prospects</button>
+            <button>Active</button>
+            <button>Archived</button>
+          </div>
+
+          <div class="search-box" role="search">
+            <span style="opacity:.6">🔍</span>
+            <input id="mainSearch" placeholder="Search clients by name, company or email..." />
+            <button id="searchBtn" class="search-btn">Search</button>
+          </div>
+        </div>
+      </div>
+
+      <header>
+        <h2>Clients</h2>
+        <p class="muted">Manage client relationships, view applications and track activity.</p>
+      </header>
+
+      <section style="margin:18px 0;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+        <button class="btn primary">New Client</button>
+        <button class="btn">Import</button>
+        <div class="muted" style="margin-left:auto">Showing 10 clients</div>
+      </section>
+
+      <section class="panel" style="padding:16px">
+        <div style="display:flex;gap:18px;align-items:flex-start">
+          <div style="flex:1">
+            <!-- list of clients (demo static entries) -->
+            <div class="card" style="padding:12px;margin-bottom:12px">
+              <div style="display:flex;gap:12px;align-items:center">
+                <div class="avatar"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%' height='100%' fill='%23ef4444' rx='10'/><text x='50%' y='55%' font-size='48' text-anchor='middle' fill='%23fff' font-family='Poppins' dy='.18em'>A</text></svg>" alt="A"></div>
+                <div style="flex:1">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                      <strong>Alex Porter</strong>
+                      <div class="muted">alex.porter@demo.com • Midtown Residences</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div class="badge-mini">Active</div>
+                      <div class="muted" style="font-size:13px;margin-top:6px">Client ID: CL-1001</div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:10px;display:flex;gap:8px">
+                    <button class="btn">View Profile</button>
+                    <button class="btn">Applications</button>
+                    <button class="btn">Contact</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="padding:12px;margin-bottom:12px">
+              <div style="display:flex;gap:12px;align-items:center">
+                <div class="avatar"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%' height='100%' fill='%233b82f6' rx='10'/><text x='50%' y='55%' font-size='48' text-anchor='middle' fill='%23fff' font-family='Poppins' dy='.18em'>J</text></svg>" alt="J"></div>
+                <div style="flex:1">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                      <strong>Jamie Lee</strong>
+                      <div class="muted">jamie.lee@demo.com • Riverside Tower</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div class="badge-mini">Prospect</div>
+                      <div class="muted" style="font-size:13px;margin-top:6px">Client ID: CL-1002</div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:10px;display:flex;gap:8px">
+                    <button class="btn">View Profile</button>
+                    <button class="btn">Message</button>
+                    <button class="btn">Add Note</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- more demo clients -->
+            <div class="card" style="padding:12px;margin-bottom:12px">
+              <div style="display:flex;gap:12px;align-items:center">
+                <div class="avatar"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%' height='100%' fill='%2310b981' rx='10'/><text x='50%' y='55%' font-size='48' text-anchor='middle' fill='%23fff' font-family='Poppins' dy='.18em'>R</text></svg>" alt="R"></div>
+                <div style="flex:1">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                      <strong>Rita Gomez</strong>
+                      <div class="muted">rita.g@demo.com • Oakwood Apartments</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div class="badge-mini">Active</div>
+                      <div class="muted" style="font-size:13px;margin-top:6px">Client ID: CL-1003</div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:10px;display:flex;gap:8px">
+                    <button class="btn">View Profile</button>
+                    <button class="btn">Applications</button>
+                    <button class="btn">Invoices</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- condensed list for the rest -->
+            <div class="card" style="padding:12px">
+              <h4 style="margin:0 0 8px">Other Clients</h4>
+              <ul style="margin:0;padding-left:18px" class="muted">
+                <li>Sam K. — sam.k@demo.com — Prospect</li>
+                <li>Clifton G. — clifton@demo.com — Active</li>
+                <li>Michelle R. — michelle@demo.com — Active</li>
+                <li>Maxine S. — maxine@demo.com — Archived</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside style="width:360px">
+            <div class="card" style="padding:12px">
+              <h4 style="margin:0 0 8px">Client Insights</h4>
+              <div style="display:flex;gap:12px;flex-direction:column">
+                <div><strong>New Leads (30d)</strong><div class="muted">18</div></div>
+                <div><strong>Active Clients</strong><div class="muted">42</div></div>
+                <div><strong>Open Applications</strong><div class="muted">7</div></div>
+                <div><strong>Outstanding Invoices</strong><div class="muted">$4,120</div></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:12px;padding:12px">
+              <h4 style="margin:0 0 8px">Quick Actions</h4>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn">Export Clients</button>
+                <button class="btn">Send Campaign</button>
+                <button class="btn">Create Task</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:12px;padding:12px">
+              <h4 style="margin:0 0 8px">Recent Activity</h4>
+              <div class="muted" style="font-size:13px">
+                • Alex updated contact • 3h ago<br>
+                • New application submitted by Rita • Yesterday<br>
+                • Invoice PMT-3419 paid • 2 days ago
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- demo area populated by script.js -->
+        <div id="demoContent" style="margin-top:16px"></div>
+
+        <!-- client-specific widget area -->
+        <div id="roleWidget" style="margin-top:12px"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/script.js"></script>
+  <script>
+    // populate demo sections
+    if(window.renderDemo) renderDemo('clients');
+    if(window.renderRoleWidgets) renderRoleWidgets('clients');
+  </script>
+</body>
+</html>

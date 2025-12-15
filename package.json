@@ -1,0 +1,25 @@
+{
+  "name": "PropEase",
+  "version": "1.0.0",
+  "description": "A real estate management prototype with a focus on user experience and modern design.",
+  "main": "src/js/script.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "keywords": [
+    "real estate",
+    "management",
+    "prototype",
+    "UI/UX"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "vite": "^2.0.0"
+  },
+  "devDependencies": {
+    "sass": "^1.32.0"
+  }
+}
