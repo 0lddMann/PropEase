@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/animations.css">
 </head>
-<body class="app-page">
+<body data-role="tenants">
   <div class="topbar">
     <button class="hamburger" aria-label="menu">☰</button>
 
@@ -20,29 +20,31 @@
     <div class="top-title">Tenants</div>
 
     <div class="top-actions">
-      <div class="muted">Signed in</div>
+      <div class="muted" id="signedInAs">Signed in</div>
+      <button id="logoutBtn" class="btn">Logout</button>
     </div>
   </div>
 
-  <div class="app-page">
-    <div class="sidebar">
+  <div class="layout">
+    <aside class="sidebar">
       <div class="brand-mini">
         <img src="assets/logo.jpg" alt="logo" />
       </div>
       <nav>
         <a href="admin.html">Dashboard</a>
-        <a class="active">Tenants</a>
+        <a href="tenants.html" class="active">Tenants</a>
         <a href="properties.html">Properties</a>
         <a href="leases.html">Leases</a>
       </nav>
       <div class="support">❓ Support</div>
-    </div>
-    <div class="main">
+    </aside>
+
+    <main class="main">
       <header>
         <h2>Tenants</h2>
         <div class="header-actions">
           <span id="welcome"></span>
-          <button id="logoutBtn" class="btn">Logout</button>
+          <button id="addTenantBtn" class="btn">Add Tenant (UI)</button>
         </div>
       </header>
 
@@ -50,30 +52,57 @@
         <div class="logo-area">
           <img src="assets/logo.svg" alt="Logo" class="logo" />
         </div>
-        <div class="toolbar">
-          <input id="searchTenant" placeholder="Search tenants..." />
-          <button class="btn">Add Tenant (UI)</button>
+
+        <div class="toolbar" style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+          <input id="searchTenant" placeholder="Search tenants..." style="flex:1;padding:8px;border-radius:6px;border:1px solid #eee"/>
+          <button id="btnClearSearch" class="btn">Clear</button>
         </div>
 
-        <table class="table">
-          <thead>
-            <tr><th>Name</th><th>Unit</th><th>Contact</th><th>Status</th><th>Action</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Maria Santos</td><td>Unit 2A</td><td>0917-xxx-xxxx</td><td>Active</td><td><button class="btn small">View</button></td></tr>
-            <tr><td>John Doe</td><td>Unit 4A</td><td>0918-xxx-xxxx</td><td>Active</td><td><button class="btn small">View</button></td></tr>
-            <tr><td>Anna Lee</td><td>Unit 1B</td><td>0919-xxx-xxxx</td><td>Inactive</td><td><button class="btn small">View</button></td></tr>
-          </tbody>
-        </table>
+        <div class="card" style="padding:8px;overflow:auto">
+          <table class="table" style="width:100%">
+            <thead>
+              <tr><th>Name</th><th>Unit</th><th>Contact</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody id="tenantsTableBody">
+              <tr><td>Maria Santos</td><td>Unit 2A</td><td>0917-xxx-xxxx</td><td>Active</td><td><button class="btn small">View</button></td></tr>
+              <tr><td>John Doe</td><td>Unit 4A</td><td>0918-xxx-xxxx</td><td>Active</td><td><button class="btn small">View</button></td></tr>
+              <tr><td>Anna Lee</td><td>Unit 1B</td><td>0919-xxx-xxxx</td><td>Inactive</td><td><button class="btn small">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
-    </div>
+    </main>
   </div>
 
   <script src="js/script.js"></script>
   <script>
-    protectPage(['admin','manager','tenant']);
-    renderWelcome();
-    document.getElementById('logoutBtn').addEventListener('click', logout);
+    // page protections and basic bindings
+    try {
+      protectPage(['admin','manager','tenant']);
+    } catch(e){ /* protectPage may not be defined in demo */ }
+
+    try { renderWelcome(); } catch(e){}
+
+    document.getElementById('logoutBtn').addEventListener('click', function(){ try{ logout(); }catch(e){} });
+
+    // simple client-side search for the tenants table
+    (function(){
+      const input = document.getElementById('searchTenant');
+      const tbody = document.getElementById('tenantsTableBody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      function filter(q){
+        q = (q||'').toLowerCase().trim();
+        rows.forEach(r=>{
+          const text = r.textContent.toLowerCase();
+          r.style.display = text.includes(q) ? '' : 'none';
+        });
+      }
+
+      input.addEventListener('input', ()=> filter(input.value));
+      document.getElementById('btnClearSearch').addEventListener('click', ()=> { input.value=''; filter(''); });
+      document.getElementById('addTenantBtn').addEventListener('click', ()=> alert('Open add tenant UI (demo)'));
+    })();
   </script>
 </body>
 </html>
